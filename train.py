@@ -3,7 +3,7 @@
 Beispiel Code und  Spielwiese
 
 """
-
+# Beispiel verwendet "SDNN" und "F1", so F1 weiter verwendet wird
 
 import csv
 import scipy.io as sio
