@@ -36,7 +36,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
 #------------------------------------------------------------------------------
 # Euer Code ab hier  
-# From here add or renew some our code 
+# From here add some our code 
     model_name = "model.npy"   
     if use_pretrained:
         model_name = "model_pretrained.npy"
