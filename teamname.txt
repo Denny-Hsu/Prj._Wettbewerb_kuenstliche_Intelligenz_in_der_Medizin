@@ -1,4 +1,4 @@
 "teamname.txt":
  [AI in MED]
- [Chewei Hsu
+ [Chewei Hsu,
   Yazan Hammoud]
