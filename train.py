@@ -9,7 +9,6 @@ import csv
 import scipy.io as sio
 import matplotlib.pyplot as plt
 import numpy as np
-from ecgdetectors import Detectors
 import os
 from wettbewerb import load_references
 
