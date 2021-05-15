@@ -1,21 +1,21 @@
 # # -*- coding: utf-8 -*-
 # """
 # Beispiel Code und  Spielwiese
-
+#
 # """
 # # Beispiel verwendet "SDNN" und "F1", so F1 weiter verwendet wird
-
+#
 # import csv
 # import scipy.io as sio
 # import matplotlib.pyplot as plt
 # import numpy as np
 # import os
 # from wettbewerb import load_references
-
-# ### if __name__ == '__main__':  # bei multiprocessing auf Windows notwendig
-
+#
+#  if __name__ == '__main__':  # bei multiprocessing auf Windows notwendig
+#
 # ecg_leads,ecg_labels,fs,ecg_names = load_references() # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
-
+#
 # detectors = Detectors(fs)                                 # Initialisierung des QRS-Detektors
 # sdnn_normal = np.array([])                                # Initialisierung der Feature-Arrays
 # sdnn_afib = np.array([])
@@ -28,7 +28,7 @@
 #       sdnn_afib = np.append(sdnn_afib,sdnn)             # Zuordnung zu "Vorhofflimmern"
 #     if (idx % 100)==0:
 #       print(str(idx) + "\t EKG Signale wurden verarbeitet.")
-
+#
 # fig, axs = plt.subplots(2,1, constrained_layout=True)
 # axs[0].hist(sdnn_normal,2000)
 # axs[0].set_xlim([0, 300])
@@ -41,7 +41,7 @@
 # axs[1].set_xlabel("SDNN (ms)")
 # axs[1].set_ylabel("Anzahl")
 # plt.show()
-
+#
 # sdnn_total = np.append(sdnn_normal,sdnn_afib) # Kombination der beiden SDNN-Listen
 # p05 = np.nanpercentile(sdnn_total,5)          # untere Schwelle
 # p95 = np.nanpercentile(sdnn_total,95)         # obere Schwelle
@@ -53,14 +53,14 @@
 #   FP = np.sum(sdnn_normal>=th)                # Falsch Positiv
 #   FN = np.sum(sdnn_afib<th)                   # Falsch Negativ
 #   F1 = np.append(F1, TP / (TP + 1/2*(FP+FN))) # Berechnung des F1-Scores
-
+#
 # th_opt=thresholds[np.argmax(F1)]              # Bestimmung des Schwellwertes mit dem höchsten F1-Score
-
+#
 # if os.path.exists("model.npy"):
 #     os.remove("model.npy")
 # with open('model.npy', 'wb') as f:
 #     np.save(f, th_opt)
-
+#
 # fig, ax = plt.subplots()
 # ax.plot(thresholds,F1)
 # ax.plot(th_opt,F1[np.argmax(F1)],'xr')
@@ -68,7 +68,7 @@
 # ax.set_xlabel("SDNN (ms)")
 # ax.set_ylabel("F1")
 # plt.show()
-
+#
 # fig, axs = plt.subplots(2,1, constrained_layout=True)
 # axs[0].hist(sdnn_normal,2000)
 # axs[0].set_xlim([0, 300])
@@ -88,11 +88,28 @@
 # axs[1].set_ylabel("Anzahl")
 # plt.show()
 
+
 import numpy as np
 import csv
-import scipy.io as sio
+import scipy.io as sp
 import os
 import matplotlib.pyplot as plt
 
+# mat_contents = sp.loadmat("/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/train_ecg_00001.mat")
+# print(mat_contents)
 
+data_path = ('/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/')
+load_mat_files = os.listdir(data_path)
+dataset ={}
+
+for file in load_mat_files:
+    print(file, 'is loading')
+    dataset['samples'] = np.append( dataset ,
+                                    np.array( [sp.loadmat( data_path + file )] ))
+    # print(dataset)
+
+# plt.plot(mat_contents)
+# plt.xlabel('time')
+# plt.ylabel('hz')
+# plt.show()
 
