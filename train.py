@@ -102,14 +102,12 @@ data_path = ('/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbe
 load_mat_files = os.listdir(data_path)
 dataset ={}
 
-for file in load_mat_files:
+for file in load_mat_files[1:]:
     print(file, 'is loading')
     dataset['samples'] = np.append( dataset ,
-                                    np.array( [sp.loadmat( data_path + file )] ))
+                                    sp.loadmat( data_path + file )['val'] )
     # print(dataset)
 
-# plt.plot(mat_contents)
-# plt.xlabel('time')
-# plt.ylabel('hz')
-# plt.show()
+
+
 
