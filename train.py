@@ -114,7 +114,7 @@ for file in load_mat_files[1:]:
     # print(dataset)
 
 # df means data frame
-df = pd.DataFrame(temp).fillna(0) # To avoid NAN problems, fill 0 for the rest matrices
+df = pd.DataFrame(temp).fillna(0) # To avoid NAN problems, fill 0 for the train matrices
 df['file_name'] = pd.Series([file[:-4] for file in load_mat_files[1:]]) # don't need .mat from file's name
 ans = pd.read_csv('/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/'.format(load_mat_files[0]), header=None)
 ans = ans[[0,1]].rename(columns={0:"file_name", 1:"label"})
@@ -123,38 +123,50 @@ dataset = dataset[(dataset["label"] == 'N') || (dataset["label"] == 'A')].reset_
 # print(dataset)
 
 
-# Divide dataset into rest- and test-dataset, which rest will divided into training- and valid-dataset
-
+# Divide dataset into train-,valid- and test-dataset
+# train,valid,test = 60%,20%,20%
 X = dataset.iloc[:, :-2].values # all rows, columns without file_name and label
 y = dataset["labels"].values
-x_rest, x_test, y_rest, y_test = train_test_split(X, y, test_size=0.2, random_state=10,stratify=y)
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=10,stratify=y)
+x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.25, random_state=10)
 
 
-# k nearest neighbor (KNN)
+
+
+######## k nearest neighbor (KNN) ########
 from sklearn.neighbors import KNeighborsClassifier
 
 knn = KNeighborsClassifier(n_neighbors = 5, metric = 'minkowski', p = 2)
-knn.fit(x_rest, y_rest)
+knn.fit(x_train, y_train)
 knn_pred = knn.predict(x_test)
 
-# Linear Regression (LR)
+######## Linear Regression (LR) ########
 from sklearn.linear_model import LogisticRegression
 
-lr = LogisticRegression(random_state=0).fit(x_rest, y_rest)
+lr = LogisticRegression(random_state=0).fit(x_train, y_train)
 lr_pred = lr.predict(x_test)
 
-# Support Vector Machine (SVM)
+######## Decision Tree Regression ########
+from sklearn.tree import DecisionTreeRegressor
+
+# Create a decision tree regressor object from DecisionTreeRegressor class
+DtReg = DecisionTreeRegressor(random_state= 0)
+# Fit the decision tree regressor with training represented by x_train, y_train
+DtReg.fit(x_train, y_train)
+
+
+######## Support Vector Machine (SVM) ########
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
 svc = make_pipeline(StandardScaler(), SVC(gamma='auto'))
-svc.fit(x_rest, y_rest)
+svc.fit(x_train, y_train)
 svc_pred = svc.predict(x_test)
 
-# Tree
+######## Tree ########
 from sklearn import tree
 
 clf = tree.DecisionTreeClassifier()
-clf = clf.fit(x_rest, y_rest)
+clf = clf.fit(x_train, y_train)
 clf_pred = clf.predict(x_test)
