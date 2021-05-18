@@ -128,7 +128,7 @@ dataset = dataset[(dataset["label"] == 'N') | (dataset["label"] == 'A')].reset_i
 X = dataset.iloc[:, :-2].values # all rows, columns without file_name and label
 y = dataset["labels"].values
 x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=10,stratify=y)
-x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.25, random_state=10)
+# x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.25, random_state=10)
 
 
 ######## k nearest neighbor (KNN) ########
