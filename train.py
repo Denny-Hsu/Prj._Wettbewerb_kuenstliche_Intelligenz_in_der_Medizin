@@ -119,7 +119,7 @@ df['file_name'] = pd.Series([file[:-4] for file in load_mat_files[1:]]) # don't 
 ans = pd.read_csv('/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/'.format(load_mat_files[0]), header=None)
 ans = ans[[0,1]].rename(columns={0:"file_name", 1:"label"})
 dataset = df.merge(ans, left_on="file_name", right_on="file_name")
-dataset = dataset[(dataset["label"] == 'N') || (dataset["label"] == 'A')].reset_index(drop=True) # only keep A and N
+dataset = dataset[(dataset["label"] == 'N') | (dataset["label"] == 'A')].reset_index(drop=True) # only keep A and N
 # print(dataset)
 
 
@@ -131,20 +131,23 @@ x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 x_train, x_val, y_train, y_val = train_test_split(x_train, y_train, test_size=0.25, random_state=10)
 
 
-
-
 ######## k nearest neighbor (KNN) ########
 from sklearn.neighbors import KNeighborsClassifier
 
-knn = KNeighborsClassifier(n_neighbors = 5, metric = 'minkowski', p = 2)
+knn = KNeighborsClassifier(n_neighbors = 3, metric = 'minkowski', p = 2)
 knn.fit(x_train, y_train)
 knn_pred = knn.predict(x_test)
+mse_knn = mean_squared_error(y_test, knn_pred, squared=True)
+print("Mean Squared Error: ", mse_knn)
 
 ######## Linear Regression (LR) ########
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import mean_squared_error
 
 lr = LogisticRegression(random_state=0).fit(x_train, y_train)
 lr_pred = lr.predict(x_test)
+mse_lr = mean_squared_error(y_test, lr_pred, squared=True)
+print("Mean Squared Error: ", mse_lr)
 
 ######## Decision Tree Regression ########
 from sklearn.tree import DecisionTreeRegressor
@@ -155,29 +158,15 @@ DtReg = DecisionTreeRegressor(random_state= 0)
 # Fit the decision tree regressor with training represented by x_train, y_train
 DtReg.fit(x_train, y_train)
 # Predicted from test dataset wrt Decision Tree Regression
-y_predict_DtReg = DtReg.predict((x_test))
+DtReg_predict = DtReg.predict((x_test))
 #Model Evaluation using R-Square for Decision Tree Regression
-r_square = metrics.r2_score(y_test, y_predict_dtr)
+r_square = metrics.r2_score(y_test, DtReg_predict)
 print('R-Square Error associated with Decision Tree Regression is:', r_square)
-''' Visualise the Decision Tree Regression by creating range of values from min value of x_train to max value of x_train  
-having a difference of 0.01 between two consecutive values'''
-X_val = np.arange(min(x_train), max(x_train), 0.01)
-
-# Reshape the data into a len(X_val)*1 array in order to make a column out of the X_val values
-X_val = X_val.reshape((len(X_val), 1))
-
-# Define a scatter plot for training data
-plt.scatter(x_train, y_train, color='blue')
-
-# Plot the predicted data
-plt.plot(X_val, DtReg.predict(X_val), color='red')
-
-plt.xlabel('X')
-plt.ylabel('Y')
-plt.show()
+mse_DtReg = mean_squared_error(y_test, DtReg_pred, squared=True)
+print("Mean Squared Error: ", mse_DtReg)
 
 
-######## Support Vector Machine (SVM) ########
+####### Support Vector Machine (SVM) ########
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -185,10 +174,14 @@ from sklearn.svm import SVC
 svc = make_pipeline(StandardScaler(), SVC(gamma='auto'))
 svc.fit(x_train, y_train)
 svc_pred = svc.predict(x_test)
+mse_svc = mean_squared_error(y_test, svc_pred, squared=True)
+print("Mean Squared Error: ", mse_svc)
 
-######## Tree ########
+####### Tree ########
 from sklearn import tree
 
 clf = tree.DecisionTreeClassifier()
 clf = clf.fit(x_train, y_train)
 clf_pred = clf.predict(x_test)
+mse_clf = mean_squared_error(y_test, clf_pred, squared=True)
+print("Mean Squared Error: ", mse_clf)
