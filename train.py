@@ -94,20 +94,67 @@ import csv
 import scipy.io as sp
 import os
 import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.model_selection import train_test_split
 
-# mat_contents = sp.loadmat("/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/train_ecg_00001.mat")
-# print(mat_contents)
+'''
+# Read the .mat file, test code
+mat_contents = sp.loadmat("/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/train_ecg_00001.mat")
+print(mat_contents)
+'''
 
+# Give data path and save the matrices in temp, which means temporary
 data_path = ('/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/')
 load_mat_files = os.listdir(data_path)
-dataset ={}
+temp =[]
 
 for file in load_mat_files[1:]:
     print(file, 'is loading')
-    dataset['samples'] = np.append( dataset ,
-                                    sp.loadmat( data_path + file )['val'] )
+    temp.append(sp.loadmat( data_path + file )['val'].tolist()[0] )
     # print(dataset)
 
+# df means data frame
+df = pd.DataFrame(temp).fillna(0) # To avoid NAN problems, fill 0 for the rest matrices
+df['file_name'] = pd.Series([file[:-4] for file in load_mat_files[1:]]) # don't need .mat from file's name
+ans = pd.read_csv('/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/'.format(load_mat_files[0]), header=None)
+ans = ans[[0,1]].rename(columns={0:"file_name", 1:"label"})
+dataset = df.merge(ans, left_on="file_name", right_on="file_name")
+dataset = dataset[(dataset["label"] == 'N') || (dataset["label"] == 'A')].reset_index(drop=True) # only keep A and N
+# print(dataset)
 
 
+# Divide dataset into rest- and test-dataset, which rest will divided into training- and valid-dataset
 
+X = dataset.iloc[:, :-2].values # all rows, columns without file_name and label
+y = dataset["labels"].values
+x_rest, x_test, y_rest, y_test = train_test_split(X, y, test_size=0.2, random_state=10,stratify=y)
+
+
+# KNN
+from sklearn.neighbors import KNeighborsClassifier
+
+knn = KNeighborsClassifier(n_neighbors = 5, metric = 'minkowski', p = 2)
+knn.fit(x_rest, y_rest)
+knn_pred = knn.predict(x_test)
+
+# Linear Regression (LR)
+from sklearn.linear_model import LogisticRegression
+
+lr = LogisticRegression(random_state=0).fit(x_rest, y_rest)
+lr_pred = lr.predict(x_test)
+
+# Support Vector Machine (SVM)
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+
+svc = make_pipeline(StandardScaler(), SVC(gamma='auto'))
+svc.fit(x_rest, y_rest)
+svc_pred = svc.predict(x_test)
+
+# Tree
+from sklearn import tree
+
+clf = tree.DecisionTreeClassifier()
+clf = clf.fit(x_rest, y_rest)
+clf_pred = clf.predict(x_test)
