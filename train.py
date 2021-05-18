@@ -96,6 +96,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 '''
 # Read the .mat file, test code
@@ -137,8 +138,10 @@ from sklearn.neighbors import KNeighborsClassifier
 knn = KNeighborsClassifier(n_neighbors = 3, metric = 'minkowski', p = 2)
 knn.fit(x_train, y_train)
 knn_pred = knn.predict(x_test)
-mse_knn = mean_squared_error(y_test, knn_pred, squared=True)
-print("Mean Squared Error: ", mse_knn)
+knn_cm = confusion_matrix(y_test, knn_pred)
+print("Accuracy:",metrics.accuracy_score(y_test, knn_pred))
+print("confusion matrix", knn_cm)
+
 
 ######## Linear Regression (LR) ########
 from sklearn.linear_model import LogisticRegression
@@ -146,8 +149,11 @@ from sklearn.metrics import mean_squared_error
 
 lr = LogisticRegression(random_state=0).fit(x_train, y_train)
 lr_pred = lr.predict(x_test)
-mse_lr = mean_squared_error(y_test, lr_pred, squared=True)
-print("Mean Squared Error: ", mse_lr)
+lr_cm = confusion_matrix(y_test, lr_pred)
+print("Accuracy:",metrics.accuracy_score(y_test, lr_pred))
+print("confusion matrix", lr_cm)
+
+
 
 ######## Decision Tree Regression ########
 from sklearn.tree import DecisionTreeRegressor
@@ -162,8 +168,10 @@ DtReg_predict = DtReg.predict((x_test))
 #Model Evaluation using R-Square for Decision Tree Regression
 r_square = metrics.r2_score(y_test, DtReg_predict)
 print('R-Square Error associated with Decision Tree Regression is:', r_square)
-mse_DtReg = mean_squared_error(y_test, DtReg_pred, squared=True)
-print("Mean Squared Error: ", mse_DtReg)
+
+DtReg_cm = confusion_matrix(y_test, DtReg_pred)
+print("Accuracy:",metrics.accuracy_score(y_test, DtReg_pred))
+print("confusion matrix", DtReg_cm)
 
 
 ####### Support Vector Machine (SVM) ########
@@ -174,8 +182,10 @@ from sklearn.svm import SVC
 svc = make_pipeline(StandardScaler(), SVC(gamma='auto'))
 svc.fit(x_train, y_train)
 svc_pred = svc.predict(x_test)
-mse_svc = mean_squared_error(y_test, svc_pred, squared=True)
-print("Mean Squared Error: ", mse_svc)
+svc_cm = confusion_matrix(y_test, svc_pred)
+print("Accuracy:",metrics.accuracy_score(y_test, svc_pred))
+print("confusion matrix", svc_cm)
+
 
 ####### Tree ########
 from sklearn import tree
@@ -183,5 +193,20 @@ from sklearn import tree
 clf = tree.DecisionTreeClassifier()
 clf = clf.fit(x_train, y_train)
 clf_pred = clf.predict(x_test)
-mse_clf = mean_squared_error(y_test, clf_pred, squared=True)
-print("Mean Squared Error: ", mse_clf)
+clf_cm = confusion_matrix(y_test, clf_pred)
+print("Accuracy:",metrics.accuracy_score(y_test, clf_pred))
+print("confusion matrix", clf_cm)
+
+
+
+####### Naive Bayesian ########
+
+gnb = GaussianNB()
+gnb.fit(x_train, y_train)
+gnb_pred = gnb.predict(x_test)
+gnb_cm = confusion_matrix(y_test, gnb_pred)
+print("Accuracy:",metrics.accuracy_score(y_test, gnb_pred))
+print("confusion matrix", gnb_cm)
+
+
+
