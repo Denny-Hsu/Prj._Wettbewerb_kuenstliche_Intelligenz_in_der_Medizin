@@ -130,7 +130,7 @@ y = dataset["labels"].values
 x_rest, x_test, y_rest, y_test = train_test_split(X, y, test_size=0.2, random_state=10,stratify=y)
 
 
-# KNN
+# k nearest neighbor (KNN)
 from sklearn.neighbors import KNeighborsClassifier
 
 knn = KNeighborsClassifier(n_neighbors = 5, metric = 'minkowski', p = 2)
