@@ -135,25 +135,12 @@ x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 ######## k nearest neighbor (KNN) ########
 from sklearn.neighbors import KNeighborsClassifier
 
-knn = KNeighborsClassifier(n_neighbors = 3, metric = 'minkowski', p = 2)
+knn = KNeighborsClassifier(n_neighbors = 5, metric = 'minkowski', p = 2)
 knn.fit(x_train, y_train)
 knn_pred = knn.predict(x_test)
 knn_cm = confusion_matrix(y_test, knn_pred)
 print("Accuracy:",metrics.accuracy_score(y_test, knn_pred))
 print("confusion matrix", knn_cm)
-
-
-######## Linear Regression (LR) ########
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import mean_squared_error
-
-lr = LogisticRegression(random_state=0).fit(x_train, y_train)
-lr_pred = lr.predict(x_test)
-lr_cm = confusion_matrix(y_test, lr_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, lr_pred))
-print("confusion matrix", lr_cm)
-
-
 
 ######## Decision Tree Regression ########
 from sklearn.tree import DecisionTreeRegressor
@@ -165,26 +152,10 @@ DtReg = DecisionTreeRegressor(random_state= 0)
 DtReg.fit(x_train, y_train)
 # Predicted from test dataset wrt Decision Tree Regression
 DtReg_predict = DtReg.predict((x_test))
-#Model Evaluation using R-Square for Decision Tree Regression
-r_square = metrics.r2_score(y_test, DtReg_predict)
-print('R-Square Error associated with Decision Tree Regression is:', r_square)
-
 DtReg_cm = confusion_matrix(y_test, DtReg_pred)
 print("Accuracy:",metrics.accuracy_score(y_test, DtReg_pred))
 print("confusion matrix", DtReg_cm)
 
-
-####### Support Vector Machine (SVM) ########
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
-
-svc = make_pipeline(StandardScaler(), SVC(gamma='auto'))
-svc.fit(x_train, y_train)
-svc_pred = svc.predict(x_test)
-svc_cm = confusion_matrix(y_test, svc_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, svc_pred))
-print("confusion matrix", svc_cm)
 
 
 ####### Decision Tree ########
@@ -197,16 +168,6 @@ clf_cm = confusion_matrix(y_test, clf_pred)
 print("Accuracy:",metrics.accuracy_score(y_test, clf_pred))
 print("confusion matrix", clf_cm)
 
-
-
-####### Naive Bayesian ########
-
-gnb = GaussianNB()
-gnb.fit(x_train, y_train)
-gnb_pred = gnb.predict(x_test)
-gnb_cm = confusion_matrix(y_test, gnb_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, gnb_pred))
-print("confusion matrix", gnb_cm)
 
 
 
