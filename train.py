@@ -148,11 +148,33 @@ lr_pred = lr.predict(x_test)
 
 ######## Decision Tree Regression ########
 from sklearn.tree import DecisionTreeRegressor
+from sklearn import metrics
 
 # Create a decision tree regressor object from DecisionTreeRegressor class
 DtReg = DecisionTreeRegressor(random_state= 0)
 # Fit the decision tree regressor with training represented by x_train, y_train
 DtReg.fit(x_train, y_train)
+# Predicted from test dataset wrt Decision Tree Regression
+y_predict_DtReg = DtReg.predict((x_test))
+#Model Evaluation using R-Square for Decision Tree Regression
+r_square = metrics.r2_score(y_test, y_predict_dtr)
+print('R-Square Error associated with Decision Tree Regression is:', r_square)
+''' Visualise the Decision Tree Regression by creating range of values from min value of x_train to max value of x_train  
+having a difference of 0.01 between two consecutive values'''
+X_val = np.arange(min(x_train), max(x_train), 0.01)
+
+# Reshape the data into a len(X_val)*1 array in order to make a column out of the X_val values
+X_val = X_val.reshape((len(X_val), 1))
+
+# Define a scatter plot for training data
+plt.scatter(x_train, y_train, color='blue')
+
+# Plot the predicted data
+plt.plot(X_val, DtReg.predict(X_val), color='red')
+
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.show()
 
 
 ######## Support Vector Machine (SVM) ########
