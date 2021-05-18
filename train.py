@@ -187,7 +187,7 @@ print("Accuracy:",metrics.accuracy_score(y_test, svc_pred))
 print("confusion matrix", svc_cm)
 
 
-####### Tree ########
+####### Decision Tree ########
 from sklearn import tree
 
 clf = tree.DecisionTreeClassifier()
