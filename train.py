@@ -96,7 +96,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, recall_score, precision_score
 
 '''
 # Read the .mat file, test code
@@ -141,6 +141,24 @@ knn_pred = knn.predict(x_test)
 knn_cm = confusion_matrix(y_test, knn_pred)
 print("Accuracy:",metrics.accuracy_score(y_test, knn_pred))
 print("confusion matrix", knn_cm)
+
+
+## Find the best n_neighbors
+for i in range(2,11):
+    knn = KNeighborsClassifier(n_neighbors = i, metric = 'minkowski', p = 2)
+    knn.fit(x_train, y_train)
+    knn_pred = knn.predict(x_test)
+    knn_cm = confusion_matrix(y_test, knn_pred)
+    knn_precision = precision_score(y_test, knn_pred)
+    knn_recall = recall_score(y_test, knn_pred)
+    knn_f1 = f1_score(y_test, knn_pred)
+    print("==========={}==============".format(i))
+    print("Accuracy:", accuracy_score(y_test, knn_pred))
+    print("confusion matrix: ", knn_cm)
+    print("precision score: ",knn_precision)
+    print("recall score: ",knn_recall)
+    print("F1 score: ",knn_f1)
+
 
 ######## Decision Tree Regression ########
 from sklearn.tree import DecisionTreeRegressor
