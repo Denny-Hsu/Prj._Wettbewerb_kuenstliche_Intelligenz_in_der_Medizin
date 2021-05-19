@@ -158,22 +158,11 @@ for i in range(2,11):
     print("precision score: ",knn_precision)
     print("recall score: ",knn_recall)
     print("F1 score: ",knn_f1)
-
-
-######## Decision Tree Regression ########
-from sklearn.tree import DecisionTreeRegressor
-from sklearn import metrics
-
-# Create a decision tree regressor object from DecisionTreeRegressor class
-DtReg = DecisionTreeRegressor(random_state= 0)
-# Fit the decision tree regressor with training represented by x_train, y_train
-DtReg.fit(x_train, y_train)
-# Predicted from test dataset wrt Decision Tree Regression
-DtReg_predict = DtReg.predict((x_test))
-DtReg_cm = confusion_matrix(y_test, DtReg_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, DtReg_pred))
-print("confusion matrix", DtReg_cm)
-
+    
+    
+# Calculate the numbers of N and A, in order to clarify which one belongs to TP or TN
+result = dict((i, y_test.count(i)) for i in y_test)
+print(result)
 
 
 ####### Decision Tree ########
