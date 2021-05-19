@@ -135,7 +135,7 @@ x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 ######## k nearest neighbor (KNN) ########
 from sklearn.neighbors import KNeighborsClassifier
 
-knn = KNeighborsClassifier(n_neighbors = 5, metric = 'minkowski', p = 2)
+knn = KNeighborsClassifier(n_neighbors = 9, metric = 'minkowski', p = 2)
 knn.fit(x_train, y_train)
 knn_pred = knn.predict(x_test)
 knn_cm = confusion_matrix(y_test, knn_pred)
@@ -158,12 +158,13 @@ for i in range(2,11):
     print("precision score: ",knn_precision)
     print("recall score: ",knn_recall)
     print("F1 score: ",knn_f1)
-    
-    
+  
+# -> n = 9 has the best recall and accuracy
+
 # Calculate the numbers of N and A, in order to clarify which one belongs to TP or TN
 result = dict((i, y_test.count(i)) for i in y_test)
-print(result)
-
+print(result) 
+# -> Result is like score.py, i.e. TP is A and TN is N
 
 ####### Decision Tree ########
 from sklearn import tree
