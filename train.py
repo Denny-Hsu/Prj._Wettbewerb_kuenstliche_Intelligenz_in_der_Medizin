@@ -100,12 +100,12 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 
 '''
 # Read the .mat file, test code
-mat_contents = sp.loadmat("/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/train_ecg_00001.mat")
+mat_contents = sp.loadmat("../training/train_ecg_00001.mat")
 print(mat_contents)
 '''
 
 # Give data path and save the matrices in temp, which means temporary
-data_path = ('/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/')
+data_path = ('../training/')
 load_mat_files = os.listdir(data_path)
 temp =[]
 
@@ -114,10 +114,11 @@ for file in load_mat_files[1:]:
     temp.append(sp.loadmat( data_path + file )['val'].tolist()[0] )
     # print(dataset)
 
+
 # df means data frame
 df = pd.DataFrame(temp).fillna(0) # To avoid NAN problems, fill 0 for the train matrices
 df['file_name'] = pd.Series([file[:-4] for file in load_mat_files[1:]]) # don't need .mat from file's name
-ans = pd.read_csv('/Users/cheweihsu/Downloads/4.Semester-SS2021/Projektseminar-Wettbewerb Künsltiche Intelligenz in der Medizin/training/'.format(load_mat_files[0]), header=None)
+ans = pd.read_csv('../training/'.format(load_mat_files[0]), header=None)
 ans = ans[[0,1]].rename(columns={0:"file_name", 1:"label"})
 dataset = df.merge(ans, left_on="file_name", right_on="file_name")
 dataset = dataset[(dataset["label"] == 'N') | (dataset["label"] == 'A')].reset_index(drop=True) # only keep A and N
@@ -207,6 +208,7 @@ gnb_pred = gnb.predict(x_test)
 gnb_cm = confusion_matrix(y_test, gnb_pred)
 print("Accuracy:",metrics.accuracy_score(y_test, gnb_pred))
 print("confusion matrix", gnb_cm)
+
 
 
 
