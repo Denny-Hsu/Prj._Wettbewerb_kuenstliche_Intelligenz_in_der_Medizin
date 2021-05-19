@@ -140,7 +140,7 @@ knn = KNeighborsClassifier(n_neighbors = 9, metric = 'minkowski', p = 2)
 knn.fit(x_train, y_train)
 knn_pred = knn.predict(x_test)
 knn_cm = confusion_matrix(y_test, knn_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, knn_pred))
+print("Accuracy:",accuracy_score(y_test, knn_pred))
 print("confusion matrix", knn_cm)
 
 
