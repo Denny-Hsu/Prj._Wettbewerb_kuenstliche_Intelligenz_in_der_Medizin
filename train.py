@@ -96,7 +96,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, recall_score, precision_score
 
 '''
 # Read the .mat file, test code
@@ -136,7 +136,7 @@ x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 ######## k nearest neighbor (KNN) ########
 from sklearn.neighbors import KNeighborsClassifier
 
-knn = KNeighborsClassifier(n_neighbors = 3, metric = 'minkowski', p = 2)
+knn = KNeighborsClassifier(n_neighbors = 9, metric = 'minkowski', p = 2)
 knn.fit(x_train, y_train)
 knn_pred = knn.predict(x_test)
 knn_cm = confusion_matrix(y_test, knn_pred)
@@ -144,49 +144,28 @@ print("Accuracy:",metrics.accuracy_score(y_test, knn_pred))
 print("confusion matrix", knn_cm)
 
 
-######## Linear Regression (LR) ########
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import mean_squared_error
+## Find the best n_neighbors
+for i in range(2,11):
+    knn = KNeighborsClassifier(n_neighbors = i, metric = 'minkowski', p = 2)
+    knn.fit(x_train, y_train)
+    knn_pred = knn.predict(x_test)
+    knn_cm = confusion_matrix(y_test, knn_pred)
+    knn_precision = precision_score(y_test, knn_pred)
+    knn_recall = recall_score(y_test, knn_pred)
+    knn_f1 = f1_score(y_test, knn_pred)
+    print("==========={}==============".format(i))
+    print("Accuracy:", accuracy_score(y_test, knn_pred))
+    print("confusion matrix: ", knn_cm)
+    print("precision score: ",knn_precision)
+    print("recall score: ",knn_recall)
+    print("F1 score: ",knn_f1)
+  
+# -> n = 9 has the best recall and accuracy
 
-lr = LogisticRegression(random_state=0).fit(x_train, y_train)
-lr_pred = lr.predict(x_test)
-lr_cm = confusion_matrix(y_test, lr_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, lr_pred))
-print("confusion matrix", lr_cm)
-
-
-
-######## Decision Tree Regression ########
-from sklearn.tree import DecisionTreeRegressor
-from sklearn import metrics
-
-# Create a decision tree regressor object from DecisionTreeRegressor class
-DtReg = DecisionTreeRegressor(random_state= 0)
-# Fit the decision tree regressor with training represented by x_train, y_train
-DtReg.fit(x_train, y_train)
-# Predicted from test dataset wrt Decision Tree Regression
-DtReg_predict = DtReg.predict((x_test))
-#Model Evaluation using R-Square for Decision Tree Regression
-r_square = metrics.r2_score(y_test, DtReg_predict)
-print('R-Square Error associated with Decision Tree Regression is:', r_square)
-
-DtReg_cm = confusion_matrix(y_test, DtReg_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, DtReg_pred))
-print("confusion matrix", DtReg_cm)
-
-
-####### Support Vector Machine (SVM) ########
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
-
-svc = make_pipeline(StandardScaler(), SVC(gamma='auto'))
-svc.fit(x_train, y_train)
-svc_pred = svc.predict(x_test)
-svc_cm = confusion_matrix(y_test, svc_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, svc_pred))
-print("confusion matrix", svc_cm)
-
+# Calculate the numbers of N and A, in order to clarify which one belongs to TP or TN
+result = dict((i, y_test.count(i)) for i in y_test)
+print(result) 
+# -> Result is like score.py, i.e. TP is A and TN is N
 
 ####### Decision Tree ########
 from sklearn import tree
@@ -198,16 +177,6 @@ clf_cm = confusion_matrix(y_test, clf_pred)
 print("Accuracy:",metrics.accuracy_score(y_test, clf_pred))
 print("confusion matrix", clf_cm)
 
-
-
-####### Naive Bayesian ########
-
-gnb = GaussianNB()
-gnb.fit(x_train, y_train)
-gnb_pred = gnb.predict(x_test)
-gnb_cm = confusion_matrix(y_test, gnb_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, gnb_pred))
-print("confusion matrix", gnb_cm)
 
 
 
