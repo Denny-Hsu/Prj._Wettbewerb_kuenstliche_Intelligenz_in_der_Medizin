@@ -17,27 +17,31 @@ ecg_leads,ecg_labels,fs,ecg_names = load_references() # Importiere EKG-Dateien, 
 # print('ecg_names: ', ecg_names)
 # print('ecg_labels: ', ecg_labels)
 
-# detectors = Detectors(fs)                                 # Initialisierung des QRS-Detektors
-ecg_normal = np.array([])                                # Initialisierung der Feature-Arrays
-ecg_afib = np.array([])
+from ecgdetectors import Detectors
+
+detectors = Detectors(fs)                                 # Initialisierung des QRS-Detektors
+sdnn_normal = np.array([])                                # Initialisierung der Feature-Arrays
+sdnn_afib = np.array([])
 ecg_leads_reduced = np.array([])
 ecg_labels_reduced = np.array([])
 for idx, ecg_lead in enumerate(ecg_leads):
-    # r_peaks = detectors.hamilton_detector(ecg_lead)     # Detektion der QRS-Komplexe
-    # sdnn = np.std(np.diff(r_peaks)/fs*1000)             # Berechnung der Standardabweichung der Schlag-zu-Schlag Intervalle (SDNN) in Millisekunden
+    r_peaks = detectors.hamilton_detector(ecg_lead)     # Detektion der QRS-Komplexe
+    sdnn = np.std(np.diff(r_peaks)/fs*1000)             # Berechnung der Standardabweichung der Schlag-zu-Schlag Intervalle (SDNN) in Millisekunden
     if ecg_labels[idx]=='N':
-      ecg_normal = np.append(ecg_normal,ecg_labels[idx])         # Zuordnung zu "Normal"
+      sdnn_normal = np.append(sdnn_normal, sdnn)         # Zuordnung zu "Normal"
     if ecg_labels[idx]=='A':
-      ecg_afib = np.append(ecg_afib,ecg_labels[idx])             # Zuordnung zu "Vorhofflimmern"
+      sdnn_afib = np.append(sdnn_afib, sdnn)             # Zuordnung zu "Vorhofflimmern"
     # if (ecg_labels[idx] == 'N') | (ecg_labels[idx] =='A'):
     #     ecg_labels_reduced = np.append(ecg_labels_reduced, ecg_labels[idx])
-    #     ecg_leads_reduced =
+    #     ecg_leads_reduced = np.append(ecg_leads_reduced, sdnn)
 
 
 
+sdnn_total = np.append(sdnn_normal,sdnn_afib) # Kombination der beiden SDNN-Listen
+print(sdnn_total.shape)
 
 # # df means data frame
-df = pd.DataFrame(ecg_leads).fillna(0) # To avoid NAN problems, fill 0 for the train matrices
+df = pd.DataFrame(sdnn_total).fillna(0) # To avoid NAN problems, fill 0 for the train matrices
 df['file_name'] = pd.Series(ecg_names) # don't need .mat from file's name
 # print('df: ',df)
 df['label'] = pd.Series(ecg_labels)
@@ -76,7 +80,20 @@ print("precision score: ", knn_precision)
 print("recall score: ", knn_recall)
 print("F1 score: ", knn_f1)
 
-
-
+####### Decision Tree ########
+# from sklearn import tree
+#
+# clf = tree.DecisionTreeClassifier()
+# clf = clf.fit(x_train, y_train)
+# clf_pred = clf.predict(x_test)
+# clf_cm = confusion_matrix(y_test, clf_pred)
+# clf_precision = precision_score(y_test, clf_pred, pos_label='A')
+# clf_recall = recall_score(y_test, clf_pred, pos_label='A')
+# clf_f1 = f1_score(y_test, clf_pred, pos_label='A')
+# print("Accuracy:",accuracy_score(y_test, clf_pred))
+# print("confusion matrix", clf_cm)
+# print("precision score: ", clf_precision)
+# print("recall score: ", clf_recall)
+# print("F1 score: ", clf_f1)
 
 

@@ -98,11 +98,15 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, recall_score, precision_score
 
-'''
+import scipy.signal as sps
 # Read the .mat file, test code
 mat_contents = sp.loadmat("../training/train_ecg_00001.mat")
-print(mat_contents)
-'''
+# print(mat_contents['val'])
+# print(mat_contents['val'].shape)
+d_ecg = np.diff(mat_contents['val'].flatten())
+peaks_d_ecg = sps.find_peaks(d_ecg)
+print(peaks_d_ecg)
+print(np.array(peaks_d_ecg).shape)
 
 # Give data path and save the matrices in temp, which means temporary
 data_path = ('../training/')
@@ -174,7 +178,7 @@ clf = tree.DecisionTreeClassifier()
 clf = clf.fit(x_train, y_train)
 clf_pred = clf.predict(x_test)
 clf_cm = confusion_matrix(y_test, clf_pred)
-print("Accuracy:",metrics.accuracy_score(y_test, clf_pred))
+print("Accuracy:",accuracy_score(y_test, clf_pred))
 print("confusion matrix", clf_cm)
 
 
