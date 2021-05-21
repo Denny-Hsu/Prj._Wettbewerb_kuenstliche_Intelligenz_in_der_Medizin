@@ -22,22 +22,24 @@ from ecgdetectors import Detectors
 detectors = Detectors(fs)                                 # Initialisierung des QRS-Detektors
 sdnn_normal = np.array([])                                # Initialisierung der Feature-Arrays
 sdnn_afib = np.array([])
+sdnn_total =[]
 ecg_leads_reduced = np.array([])
 ecg_labels_reduced = np.array([])
 for idx, ecg_lead in enumerate(ecg_leads):
     r_peaks = detectors.hamilton_detector(ecg_lead)     # Detektion der QRS-Komplexe
     sdnn = np.std(np.diff(r_peaks)/fs*1000)             # Berechnung der Standardabweichung der Schlag-zu-Schlag Intervalle (SDNN) in Millisekunden
-    if ecg_labels[idx]=='N':
-      sdnn_normal = np.append(sdnn_normal, sdnn)         # Zuordnung zu "Normal"
-    if ecg_labels[idx]=='A':
-      sdnn_afib = np.append(sdnn_afib, sdnn)             # Zuordnung zu "Vorhofflimmern"
+    sdnn_total = np.append(sdnn_total, sdnn)  # Kombination der beiden SDNN-Listen
+
+    # if ecg_labels[idx]=='N':
+    #   sdnn_normal = np.append(sdnn_normal, sdnn)         # Zuordnung zu "Normal"
+    # if ecg_labels[idx]=='A':
+    #   sdnn_afib = np.append(sdnn_afib, sdnn)             # Zuordnung zu "Vorhofflimmern"
     # if (ecg_labels[idx] == 'N') | (ecg_labels[idx] =='A'):
     #     ecg_labels_reduced = np.append(ecg_labels_reduced, ecg_labels[idx])
     #     ecg_leads_reduced = np.append(ecg_leads_reduced, sdnn)
 
 
 
-sdnn_total = np.append(sdnn_normal,sdnn_afib) # Kombination der beiden SDNN-Listen
 print(sdnn_total.shape)
 
 # # df means data frame
@@ -67,7 +69,7 @@ print(result)
 ######## k nearest neighbor (KNN) ########
 from sklearn.neighbors import KNeighborsClassifier
 
-knn = KNeighborsClassifier(n_neighbors = 9, metric = 'minkowski', p = 2)
+knn = KNeighborsClassifier(n_neighbors = 2, metric = 'minkowski', p = 2)
 knn.fit(x_train, y_train)
 knn_pred = knn.predict(x_test)
 knn_cm = confusion_matrix(y_test, knn_pred)
