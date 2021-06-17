@@ -10,8 +10,6 @@ from wettbewerb import load_references
 
 
 
-
-
 ecg_leads,ecg_labels,fs,ecg_names = load_references() # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
 # print('ecg_leads: ', ecg_leads)
 # print('ecg_names: ', ecg_names)
@@ -71,6 +69,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 knn = KNeighborsClassifier(n_neighbors = 2, metric = 'minkowski', p = 2)
 knn.fit(x_train, y_train)
+
 knn_pred = knn.predict(x_test)
 knn_cm = confusion_matrix(y_test, knn_pred)
 knn_precision = precision_score(y_test, knn_pred, pos_label='A')
