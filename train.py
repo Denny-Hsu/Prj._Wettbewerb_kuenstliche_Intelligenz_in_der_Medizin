@@ -236,11 +236,11 @@ y = dataset["label"].values
 
 # X = X.reshape(X.shape[0], X.shape[1], 1)
 
-for n, i in enumerate(y):
-    if i == "N":
-        y[n] = 0
-    elif i == "A":
-        y[n] = 1
+# for n, i in enumerate(y):
+#     if i == "N":
+#         y[n] = 0
+#     elif i == "A":
+#         y[n] = 1
 
 # x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=10,stratify=y)
 # x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size=0.25, random_state=10)

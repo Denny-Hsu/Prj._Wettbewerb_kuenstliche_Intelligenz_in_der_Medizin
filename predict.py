@@ -63,24 +63,6 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 # #------------------------------------------------------------------------------
 #     return predictions # Liste von Tupels im Format (ecg_name,label) - Muss unverändert bleiben!
 
-    # model_name = "model.npy"
-    # if use_pretrained:
-    #     model_name = "model_pretrained.npy"
-    # with open(model_name, 'rb') as f:
-    #     th_opt = np.load(f)  # Lade simples Model (1 Parameter)
-    #
-    # detectors = Detectors(fs)  # Initialisierung des QRS-Detektors
-
-
-    # for idx, ecg_lead in enumerate(ecg_leads):
-    #     # r_peaks = detectors.hamilton_detector(ecg_lead)  # Detektion der QRS-Komplexe
-    #     # sdnn = np.std(np.diff(r_peaks) / fs * 1000)
-    #     if sdnn < th_opt:
-    #         predictions.append((ecg_names[idx], 'N'))
-    #     else:
-    #         predictions.append((ecg_names[idx], 'A'))
-    #     if ((idx + 1) % 100) == 0:
-    #         print(str(idx + 1) + "\t Dateien wurden verarbeitet.")
 
     df_test = pd.DataFrame(ecg_leads).fillna(0)  # To avoid NAN problems, fill 0 for the train matrices
     df_test['file_name'] = pd.Series(ecg_names)  # don't need .mat from file's name
@@ -94,13 +76,11 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     x_test_ecg,y_test_ecg = get_ecg_features(lead_test, label_test, 'db4')
     cls_over_pred = cls.predict(x_test_ecg)
 
-    for n, i in enumerate(cls_over_pred):
-        if i == 0:
-            y[n] = "N"
-        elif i == 1:
-            y[n] = "A"
 
     def pred_use(test_name):
+
+        pred = list()
+
         pred = np.append(pred, (list(test_name), list(cls_over_pred)))
 
         return pred
