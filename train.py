@@ -99,7 +99,7 @@ import scipy.stats
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, recall_score, precision_score
-from collections import Counter #, defaultdict
+# from collections import Counter #, defaultdict
 
 from sklearn.ensemble import GradientBoostingClassifier
 from imblearn.over_sampling import SMOTE
@@ -245,8 +245,8 @@ y = dataset["label"].values
 # x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=10,stratify=y)
 # x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size=0.25, random_state=10)
 
-result = collections.Counter(y)
-print(result)
+# result = collections.Counter(y)
+# print(result)
 
 # import os
 # import time
