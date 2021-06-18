@@ -97,14 +97,15 @@ import numpy as np
 import pywt
 import scipy.stats
 import pandas as pd
+import pickle
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score, f1_score, recall_score, precision_score
-# from collections import Counter #, defaultdict
+import collections
+from collections import Counter #, defaultdict
 
 from sklearn.ensemble import GradientBoostingClassifier
 from imblearn.over_sampling import SMOTE
 
-import collections
 
 from wettbewerb import load_references
 
@@ -323,9 +324,11 @@ x_over, y_over = SMOTE(random_state=42).fit_resample(list(X), list(y))
 X_over_ecg, Y_over_ecg = get_ecg_features(x_over, y_over, 'db4')
 
 ### GradientBoostingClassifier
-cls = GradientBoostingClassifier(n_estimators=10000)
+cls = GradientBoostingClassifier(n_estimators=100)
 cls.fit(list(X_over_ecg), list(Y_over_ecg))
 
+with open('cls.pickle','wb') as f:
+    pickle.dump(cls, f)
 
 
 # f1_cls = f1_score(list(Y_test_ecg), list(cls_over_pred))
