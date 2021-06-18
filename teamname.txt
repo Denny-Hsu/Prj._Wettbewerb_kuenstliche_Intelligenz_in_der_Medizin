@@ -1,4 +1,3 @@
-"teamname.txt":
- [AI in MED]
- [Chewei Hsu,
-  Yazan Hammoud]
+AI in MED
+Chewei Hsu
+Yazan Hammoud
