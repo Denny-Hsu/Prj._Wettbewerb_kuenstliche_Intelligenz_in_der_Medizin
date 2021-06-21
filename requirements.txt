@@ -8,3 +8,5 @@ imblearn==0.0
 PyWavelets==1.1.1
 pickle-mixin==1.0.2
 Counter==1.0.0
+tqdm==4.61.1
+opencv-python==4.5.2.54
