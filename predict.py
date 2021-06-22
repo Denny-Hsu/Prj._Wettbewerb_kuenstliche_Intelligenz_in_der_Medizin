@@ -117,7 +117,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
     from keras.models import load_model
 
-    model = load_model('best_model.h5', custom_objects={'fbeta': fbeta})
+    model = load_model('pred_model.h5', custom_objects={'fbeta': fbeta})
     pred_labels = model.predict_classes(test_images)
 
     for n, i in enumerate(pred_labels):
