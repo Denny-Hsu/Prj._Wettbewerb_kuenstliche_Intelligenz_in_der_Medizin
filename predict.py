@@ -69,6 +69,64 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 #     return predictions # Liste von Tupels im Format (ecg_name,label) - Muss unverändert bleiben!
 
     # Load test-dataset
+    from tqdm import tqdm
+    import os
+    from os import listdir
+    from os.path import isfile, join
+    import cv2
+
+    #####
+    THRESHOLD = 0.5
+
+    def precision(y_true, y_pred, threshold_shift=0.5 - THRESHOLD):
+
+        # just in case
+        y_pred = K.clip(y_pred, 0, 1)
+
+        # shifting the prediction threshold from .5 if needed
+        y_pred_bin = K.round(y_pred + threshold_shift)
+
+        tp = K.sum(K.round(y_true * y_pred_bin)) + K.epsilon()
+        fp = K.sum(K.round(K.clip(y_pred_bin - y_true, 0, 1)))
+
+        precision = tp / (tp + fp)
+        return precision
+
+    def recall(y_true, y_pred, threshold_shift=0.5 - THRESHOLD):
+
+        # just in case
+        y_pred = K.clip(y_pred, 0, 1)
+
+        # shifting the prediction threshold from .5 if needed
+        y_pred_bin = K.round(y_pred + threshold_shift)
+
+        tp = K.sum(K.round(y_true * y_pred_bin)) + K.epsilon()
+        fn = K.sum(K.round(K.clip(y_true - y_pred_bin, 0, 1)))
+
+        recall = tp / (tp + fn)
+        return recall
+
+    def fbeta(y_true, y_pred, threshold_shift=0.5 - THRESHOLD):
+        beta = 1
+
+        # just in case
+        y_pred = K.clip(y_pred, 0, 1)
+
+        # shifting the prediction threshold from .5 if needed
+        y_pred_bin = K.round(y_pred + threshold_shift)
+
+        tp = K.sum(K.round(y_true * y_pred_bin)) + K.epsilon()
+        fp = K.sum(K.round(K.clip(y_pred_bin - y_true, 0, 1)))
+        fn = K.sum(K.round(K.clip(y_true - y_pred, 0, 1)))
+
+        precision = tp / (tp + fp)
+        recall = tp / (tp + fn)
+
+        beta_squared = beta ** 2
+        return (beta_squared + 1) * (precision * recall) / (beta_squared * precision + recall)
+
+    #####
+
     ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name
 
     test_set = ecg_leads
