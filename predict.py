@@ -138,7 +138,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
         data = ecg_leads[i].reshape(len(ecg_leads[i]), 1)
         plt.figure(figsize=(60, 5))
         plt.xlim(0, len(ecg_leads[i]))
-        plt.plot(data, color='black', linewidth=0.1)
+        # plt.plot(data, color='black', linewidth=0.1)
         plt.savefig('../test/ecg_images/{}.png'.format(ecg_names[i]))
 
     onlyfiles = [f for f in listdir("../test/ecg_images") if isfile(join("../test/ecg_images", f))]

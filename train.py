@@ -20,20 +20,20 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score,f1_score,recall_score,precision_score
 from ecgdetectors import Detectors
 
-import keras
-from keras.models import Sequential, load_model
-from keras.layers import Conv2D, MaxPooling2D, MaxPool2D, GlobalAveragePooling2D, Flatten
-from keras.layers import Dense, Dropout, LeakyReLU
+import tensorflow
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, MaxPool2D, GlobalAveragePooling2D, Flatten
+from tensorflow.keras.layers import Dense, Dropout, LeakyReLU
 # from keras.utils import plot_model
-from keras.optimizers import SGD
-from keras import regularizers
-from keras.callbacks import EarlyStopping
-from keras.callbacks import ModelCheckpoint
-from keras.callbacks import ReduceLROnPlateau
-from keras.utils.np_utils import to_categorical
+# from keras.optimizers import SGD
+# from keras import regularizers
+# from keras.callbacks import EarlyStopping
+# from keras.callbacks import ModelCheckpoint
+# from keras.callbacks import ReduceLROnPlateau
+# from keras.utils.np_utils import to_categorical
 
-from keras import backend as K
-from keras.layers.normalization import BatchNormalization
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import BatchNormalization
 from sklearn.metrics import fbeta_score
 
 
@@ -67,6 +67,7 @@ for i in tqdm(range(len(dataset))):
     plt.plot(data, color='black', linewidth = 0.1)
     plt.savefig('../training/ecg_images/{}.png'.format(ecg_names[i]))
 
+    plt.close()
 
 onlyfiles = [f for f in listdir("../training/ecg_images") if isfile(join("../training//ecg_images", f))]
 
