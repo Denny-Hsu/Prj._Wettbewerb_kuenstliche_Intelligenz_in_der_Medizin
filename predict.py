@@ -80,7 +80,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
     onlyfiles = [f for f in listdir("./ecg_images") if isfile(join("./ecg_images", f))]
 
-    df = pd.read_csv("./test/REFERENCE.csv", header=None)
+    df = pd.read_csv("../test/REFERENCE.csv", header=None)
     x = []
     y = []
     for i in range(len(onlyfiles)):
