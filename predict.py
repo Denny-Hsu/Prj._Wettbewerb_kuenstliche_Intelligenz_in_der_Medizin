@@ -72,14 +72,18 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name
 
     test_set = ecg_leads
+    if os.path.exists("../test/ecg_images"):
+        print("File exists.")
+    else:
+        os.mkdir("../test/ecg_images")
     for i in tqdm(range(len(test_set))):
         data = ecg_leads[i].reshape(len(ecg_leads[i]), 1)
         plt.figure(figsize=(60, 5))
         plt.xlim(0, len(ecg_leads[i]))
         plt.plot(data, color='black', linewidth=0.1)
-        plt.savefig('../ecg_images/{}.png'.format(ecg_names[i]))
+        plt.savefig('../test/ecg_images/{}.png'.format(ecg_names[i]))
 
-    onlyfiles = [f for f in listdir("./ecg_images") if isfile(join("./ecg_images", f))]
+    onlyfiles = [f for f in listdir("../test/ecg_images") if isfile(join("../test/ecg_images", f))]
 
     df = pd.read_csv("../test/REFERENCE.csv", header=None)
     x = []
@@ -88,7 +92,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
     for i in range(len(onlyfiles)):
         if (df.iloc[i][1] == "N") or (df.iloc[i][1] == "A"):
-            image = cv2.imread("./ecg_images/{}".format(onlyfiles[i]))
+            image = cv2.imread("../test/ecg_images/{}".format(onlyfiles[i]))
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             resize_x = cv2.resize(gray, (128, 1024))
             reshape_x = np.asarray(resize_x).reshape(resize_x.shape[0], resize_x.shape[1], 1)
