@@ -11,3 +11,4 @@ Counter==1.0.0
 tqdm==4.61.1
 opencv-python==4.5.2.54
 hrv-analysis==1.0.4
+keras==2.4.3
