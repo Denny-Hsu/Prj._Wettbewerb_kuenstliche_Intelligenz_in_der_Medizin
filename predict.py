@@ -68,6 +68,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 # #------------------------------------------------------------------------------
 #     return predictions # Liste von Tupels im Format (ecg_name,label) - Muss unverändert bleiben!
 
+    # Load test-dataset
     ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name
 
     test_set = ecg_leads
@@ -83,6 +84,8 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     df = pd.read_csv("../test/REFERENCE.csv", header=None)
     x = []
     y = []
+    name_test =[]
+
     for i in range(len(onlyfiles)):
         if (df.iloc[i][1] == "N") or (df.iloc[i][1] == "A"):
             image = cv2.imread("./ecg_images/{}".format(onlyfiles[i]))
@@ -91,6 +94,8 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
             reshape_x = np.asarray(resize_x).reshape(resize_x.shape[0], resize_x.shape[1], 1)
             x.append(reshape_x)
             y.append(df.iloc[i][1])
+            name_test.append(df.iloc[i])
+
 
     for n, i in enumerate(y):
         if i == "N":
