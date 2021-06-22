@@ -59,13 +59,13 @@ if os.path.exists("../training/ecg_images"):
 else:
     os.mkdir("../training/ecg_images")
 
-# for i in tqdm(range(len(dataset))):
-#     data = ecg_leads[i].reshape(len(ecg_leads[i]),1)
-#
-#     plt.figure(figsize=(60, 5))
-#     plt.xlim(0,len(ecg_leads[i]))
-#     plt.plot(data, color='black', linewidth = 0.1)
-#     plt.savefig('../training/ecg_images/{}.png'.format(ecg_names[i]))
+for i in tqdm(range(len(dataset))):
+    data = ecg_leads[i].reshape(len(ecg_leads[i]),1)
+
+    plt.figure(figsize=(60, 5))
+    plt.xlim(0,len(ecg_leads[i]))
+    plt.plot(data, color='black', linewidth = 0.1)
+    plt.savefig('../training/ecg_images/{}.png'.format(ecg_names[i]))
 
 
 onlyfiles = [f for f in listdir("../training/ecg_images") if isfile(join("../training//ecg_images", f))]
