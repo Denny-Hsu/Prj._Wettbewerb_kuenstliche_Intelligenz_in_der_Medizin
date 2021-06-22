@@ -141,39 +141,32 @@ def fbeta(y_true, y_pred, threshold_shift=0.5-THRESHOLD):
 
 model = models.Sequential()
 
-model.add(layers.Conv2D(16, (3,3), activation='relu', input_shape = (360, 4320, 1)))
+model.add(layers.Conv2D(128, (3,3), activation='relu', input_shape = (256, 128, 1)))
 model.add(layers.BatchNormalization())
 model.add(layers.MaxPool2D(2,2))
 # model.add(layers.Dropout(0.2))
-
-model.add(layers.Conv2D(32, (3,3), activation='relu'))
-model.add(layers.BatchNormalization())
-model.add(layers.MaxPool2D(2,2))
-# model.add(layers.Dropout(0.2))
-
-model.add(layers.Conv2D(64, (3,3), activation='relu'))
-model.add(layers.BatchNormalization())
-model.add(layers.MaxPool2D(2,2))
-# model.add(layers.Dropout(0.2))
-
-model.add(layers.Conv2D(32, (3,3), activation='relu'))
-model.add(layers.BatchNormalization())
-model.add(layers.MaxPool2D(2,2))
-# model.add(layers.Dropout(0.3))
-
-model.add(layers.Conv2D(64, (3,3), activation='relu'))
-model.add(layers.BatchNormalization())
-model.add(layers.MaxPool2D(2,2))
-model.add(layers.Dropout(0.4))
 
 model.add(layers.Conv2D(128, (3,3), activation='relu'))
 model.add(layers.BatchNormalization())
 model.add(layers.MaxPool2D(2,2))
 model.add(layers.Dropout(0.5))
 
+model.add(layers.Conv2D(64, (3,3), activation='relu'))
+model.add(layers.BatchNormalization())
+model.add(layers.MaxPool2D(2,2))
+model.add(layers.Dropout(0.5))
+
+model.add(layers.Conv2D(32, (3,3), activation='relu'))
+model.add(layers.Conv2D(32, (3,3), activation='relu'))
+
+model.add(layers.BatchNormalization())
+# model.add(layers.MaxPool2D(2,2))
+model.add(layers.Dropout(0.5))
+
 model.add(layers.Flatten())
 
-model.add(layers.Dense(128, activation='relu'))
+
+model.add(layers.Dense(256, activation='relu'))
 model.add(layers.BatchNormalization())
 model.add(layers.Dropout(0.5))
 
@@ -181,8 +174,15 @@ model.add(layers.Dense(128, activation='relu'))
 model.add(layers.BatchNormalization())
 model.add(layers.Dropout(0.5))
 
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.BatchNormalization())
+model.add(layers.Dropout(0.5))
 
-model.add(layers.Dense(2, activation='sigmoid'))
+model.add(layers.Dense(32, activation='relu'))
+model.add(layers.BatchNormalization())
+model.add(layers.Dropout(0.5))
+
+model.add(layers.Dense(1, activation='sigmoid'))
 
 model.summary()
 
