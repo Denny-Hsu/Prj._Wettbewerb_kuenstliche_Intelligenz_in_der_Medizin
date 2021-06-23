@@ -172,17 +172,18 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     # # Normalize pixel values to be between 0 and 1
     test_images = test_images / 255.0
 
-
+    import keras
     from keras.models import load_model
 
     model = load_model('pred_model.h5', custom_objects={'fbeta': fbeta})
     pred_labels = model.predict_classes(test_images)
-
+    
+    pred_labels = np.asarray(pred_labels).astype('str')
     for n, i in enumerate(pred_labels):
-        if i == 0:
-            y[n] = "N"
-        elif i == 1:
-            y[n] = "A"
+        if i == '0':
+            pred_labels[n] = "N"
+        elif i == '1':
+            pred_labels[n] = "A"
 
     def pred_use(test_name):
 
