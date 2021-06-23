@@ -12,5 +12,5 @@ tqdm==4.61.1
 opencv-python==4.5.2.54
 hrv-analysis==1.0.4
 keras==2.4.3
-h5py==3.2.1
+h5py==3.3.0
 tensorflow==2.5.0
