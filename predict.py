@@ -175,7 +175,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     import keras
     from keras.models import load_model
 
-    model = load_model('pred_model.hdf5', custom_objects={'fbeta': fbeta})
+    model = load_model('pred_model.h5', custom_objects={'fbeta': fbeta})
     pred_labels = model.predict(test_images)
     
     pred_labels = np.asarray(pred_labels).astype('str')
