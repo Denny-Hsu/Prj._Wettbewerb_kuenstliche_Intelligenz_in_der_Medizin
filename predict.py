@@ -173,6 +173,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     test_images = test_images / 255.0
 
     import keras
+    import tensorflow as tf
     from keras.models import load_model
 
     model = load_model('pred_model.h5', custom_objects={'fbeta': fbeta})

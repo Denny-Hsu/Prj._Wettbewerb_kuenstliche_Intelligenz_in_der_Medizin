@@ -21,6 +21,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score,f1_score,recall_sco
 from ecgdetectors import Detectors
 
 import keras
+import tensorflow as tf
 from keras.models import Sequential, load_model
 from keras.layers import Conv2D, MaxPooling2D, MaxPool2D, GlobalAveragePooling2D, Flatten
 from keras.layers import Dense, Dropout, LeakyReLU
