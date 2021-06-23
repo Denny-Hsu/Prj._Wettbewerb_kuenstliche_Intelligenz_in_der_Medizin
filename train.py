@@ -20,8 +20,9 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score,f1_score,recall_score,precision_score
 from ecgdetectors import Detectors
 
-import keras
+# import keras
 import tensorflow as tf
+from tensorflow import keras
 from keras.models import Sequential, load_model
 from keras.layers import Conv2D, MaxPooling2D, MaxPool2D, GlobalAveragePooling2D, Flatten
 from keras.layers import Dense, Dropout, LeakyReLU
@@ -202,4 +203,4 @@ model.compile(optimizer='adam',   # change: use SGD
 history = model.fit(train_images, train_labels, batch_size=128, epochs = 500, validation_split=0.25, verbose = 1)  #epochs = 500
 
 
-model.save('pred_model.h5')
+model.save('./pred_model.h5')

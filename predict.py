@@ -176,7 +176,13 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     import tensorflow as tf
     from keras.models import load_model
 
-    model = load_model('pred_model.h5', custom_objects={'fbeta': fbeta})
+    # model = load_model('./pred_model.h5', custom_objects={'fbeta': fbeta})
+    model = tf.keras.models.load_model('./pred_model.h5', custom_objects={'fbeta': fbeta})
+    # model = tf.keras.models.load_model('./pred_model.h5', custom_objects={'fbeta': fbeta})
+    # converter = tf.lite.TFLiteConverter.from_keras_model(model)  # .from_saved_model(saved_model_dir)
+    # tflite_model = converter.convert()
+    # open("model.tflite", "wb").write(tflite_model)
+
     pred_labels = model.predict_classes(test_images)
     
     pred_labels = np.asarray(pred_labels).astype('str')
