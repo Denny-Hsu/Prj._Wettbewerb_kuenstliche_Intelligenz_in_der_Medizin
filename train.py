@@ -23,9 +23,9 @@ from ecgdetectors import Detectors
 # import keras
 import tensorflow as tf
 from tensorflow import keras
-from keras.models import Sequential, load_model
-from keras.layers import Conv2D, MaxPooling2D, MaxPool2D, GlobalAveragePooling2D, Flatten
-from keras.layers import Dense, Dropout, LeakyReLU
+from tensorflow.keras.models import Sequential, load_model
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, MaxPool2D, GlobalAveragePooling2D, Flatten, BatchNormalization
+from tensorflow.keras.layers import Dense, Dropout, LeakyReLU
 # from keras.utils import plot_model
 # from keras.optimizers import SGD
 # from keras import regularizers
@@ -34,8 +34,7 @@ from keras.layers import Dense, Dropout, LeakyReLU
 # from keras.callbacks import ReduceLROnPlateau
 # from keras.utils.np_utils import to_categorical
 
-from keras import backend as K
-from keras.layers import BatchNormalization
+from tensorflow.keras import backend as K
 from sklearn.metrics import fbeta_score
 
 
