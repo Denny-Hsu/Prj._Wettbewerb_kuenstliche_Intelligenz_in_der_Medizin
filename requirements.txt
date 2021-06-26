@@ -14,3 +14,4 @@ hrv-analysis==1.0.4
 keras==2.4.3
 h5py==3.3.0
 tensorflow==2.5.0
+joblib==1.0.1
