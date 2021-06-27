@@ -23,6 +23,8 @@ import pandas as pd
 from wettbewerb import load_references
 
 import joblib
+import neurokit2 as nk
+
 
 ###Signatur der Methode (Parameter und Anzahl return-Werte) darf nicht verändert werden
 def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
@@ -196,6 +198,9 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     # == Start ==
     
     # Use only 'N' and 'A' labels for testing
+
+    ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
+
     test_features = np.array([])    
     test_labels = np.array([])
     ECG_name = np.array([])
@@ -229,10 +234,8 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     # a list of tuple
     predictions = list()
     
-    for idx in enumerate(X_test):
+    for idx in range(len(y_test)):
         predictions.append((ECG_name[idx], pred_labels[idx]))
-
-
 
     # ------------------------------------------------------------------------------
     return predictions  # Liste von Tupels im Format (ecg_name,label) - Muss unverändert bleiben!
