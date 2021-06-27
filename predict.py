@@ -22,6 +22,8 @@ import os
 import pandas as pd
 from wettbewerb import load_references
 
+import joblib
+
 ###Signatur der Methode (Parameter und Anzahl return-Werte) darf nicht verändert werden
 def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     '''
@@ -69,138 +71,164 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 #     return predictions # Liste von Tupels im Format (ecg_name,label) - Muss unverändert bleiben!
 
     # Load test-dataset
-    from tqdm import tqdm
-    import os
-    from os import listdir
-    from os.path import isfile, join
-    import cv2
+#     from tqdm import tqdm
+#     import os
+#     from os import listdir
+#     from os.path import isfile, join
+#     import cv2
 
     #####
-    THRESHOLD = 0.5
+#     THRESHOLD = 0.5
 
-    def precision(y_true, y_pred, threshold_shift=0.5 - THRESHOLD):
+#     def precision(y_true, y_pred, threshold_shift=0.5 - THRESHOLD):
 
-        # just in case
-        y_pred = K.clip(y_pred, 0, 1)
+#         # just in case
+#         y_pred = K.clip(y_pred, 0, 1)
 
-        # shifting the prediction threshold from .5 if needed
-        y_pred_bin = K.round(y_pred + threshold_shift)
+#         # shifting the prediction threshold from .5 if needed
+#         y_pred_bin = K.round(y_pred + threshold_shift)
 
-        tp = K.sum(K.round(y_true * y_pred_bin)) + K.epsilon()
-        fp = K.sum(K.round(K.clip(y_pred_bin - y_true, 0, 1)))
+#         tp = K.sum(K.round(y_true * y_pred_bin)) + K.epsilon()
+#         fp = K.sum(K.round(K.clip(y_pred_bin - y_true, 0, 1)))
 
-        precision = tp / (tp + fp)
-        return precision
+#         precision = tp / (tp + fp)
+#         return precision
 
-    def recall(y_true, y_pred, threshold_shift=0.5 - THRESHOLD):
+#     def recall(y_true, y_pred, threshold_shift=0.5 - THRESHOLD):
 
-        # just in case
-        y_pred = K.clip(y_pred, 0, 1)
+#         # just in case
+#         y_pred = K.clip(y_pred, 0, 1)
 
-        # shifting the prediction threshold from .5 if needed
-        y_pred_bin = K.round(y_pred + threshold_shift)
+#         # shifting the prediction threshold from .5 if needed
+#         y_pred_bin = K.round(y_pred + threshold_shift)
 
-        tp = K.sum(K.round(y_true * y_pred_bin)) + K.epsilon()
-        fn = K.sum(K.round(K.clip(y_true - y_pred_bin, 0, 1)))
+#         tp = K.sum(K.round(y_true * y_pred_bin)) + K.epsilon()
+#         fn = K.sum(K.round(K.clip(y_true - y_pred_bin, 0, 1)))
 
-        recall = tp / (tp + fn)
-        return recall
+#         recall = tp / (tp + fn)
+#         return recall
 
-    def fbeta(y_true, y_pred, threshold_shift=0.5 - THRESHOLD):
-        beta = 1
+#     def fbeta(y_true, y_pred, threshold_shift=0.5 - THRESHOLD):
+#         beta = 1
 
-        # just in case
-        y_pred = K.clip(y_pred, 0, 1)
+#         # just in case
+#         y_pred = K.clip(y_pred, 0, 1)
 
-        # shifting the prediction threshold from .5 if needed
-        y_pred_bin = K.round(y_pred + threshold_shift)
+#         # shifting the prediction threshold from .5 if needed
+#         y_pred_bin = K.round(y_pred + threshold_shift)
 
-        tp = K.sum(K.round(y_true * y_pred_bin)) + K.epsilon()
-        fp = K.sum(K.round(K.clip(y_pred_bin - y_true, 0, 1)))
-        fn = K.sum(K.round(K.clip(y_true - y_pred, 0, 1)))
+#         tp = K.sum(K.round(y_true * y_pred_bin)) + K.epsilon()
+#         fp = K.sum(K.round(K.clip(y_pred_bin - y_true, 0, 1)))
+#         fn = K.sum(K.round(K.clip(y_true - y_pred, 0, 1)))
 
-        precision = tp / (tp + fp)
-        recall = tp / (tp + fn)
+#         precision = tp / (tp + fp)
+#         recall = tp / (tp + fn)
 
-        beta_squared = beta ** 2
-        return (beta_squared + 1) * (precision * recall) / (beta_squared * precision + recall)
+#         beta_squared = beta ** 2
+#         return (beta_squared + 1) * (precision * recall) / (beta_squared * precision + recall)
 
     #####
 
-    ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name
+#     ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name
 
-    test_set = ecg_leads
-    if os.path.exists("../test/ecg_images"):
-        print("File exists.")
-    else:
-        os.mkdir("../test/ecg_images")
-    for i in tqdm(range(len(test_set))):
-        data = ecg_leads[i].reshape(len(ecg_leads[i]), 1)
-        plt.figure(figsize=(60, 5))
-        plt.xlim(0, len(ecg_leads[i]))
-        # plt.plot(data, color='black', linewidth=0.1)
-        plt.savefig('../test/ecg_images/{}.png'.format(ecg_names[i]))
+#     test_set = ecg_leads
+#     if os.path.exists("../test/ecg_images"):
+#         print("File exists.")
+#     else:
+#         os.mkdir("../test/ecg_images")
+#     for i in tqdm(range(len(test_set))):
+#         data = ecg_leads[i].reshape(len(ecg_leads[i]), 1)
+#         plt.figure(figsize=(60, 5))
+#         plt.xlim(0, len(ecg_leads[i]))
+#         # plt.plot(data, color='black', linewidth=0.1)
+#         plt.savefig('../test/ecg_images/{}.png'.format(ecg_names[i]))
 
-    onlyfiles = [f for f in listdir("../test/ecg_images") if isfile(join("../test/ecg_images", f))]
+#     onlyfiles = [f for f in listdir("../test/ecg_images") if isfile(join("../test/ecg_images", f))]
 
-    df = pd.read_csv("../test/REFERENCE.csv", header=None)
-    x = []
-    y = []
-    name_test =[]
+#     df = pd.read_csv("../test/REFERENCE.csv", header=None)
+#     x = []
+#     y = []
+#     name_test =[]
 
-    for i in range(len(onlyfiles)):
-        if (df.iloc[i][1] == "N") or (df.iloc[i][1] == "A"):
-            image = cv2.imread("../test/ecg_images/{}".format(onlyfiles[i]))
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            resize_x = cv2.resize(gray, (128, 1024))
-            reshape_x = np.asarray(resize_x).reshape(resize_x.shape[0], resize_x.shape[1], 1)
-            x.append(reshape_x)
-            y.append(df.iloc[i][1])
-            name_test.append(df.iloc[i])
+#     for i in range(len(onlyfiles)):
+#         if (df.iloc[i][1] == "N") or (df.iloc[i][1] == "A"):
+#             image = cv2.imread("../test/ecg_images/{}".format(onlyfiles[i]))
+#             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#             resize_x = cv2.resize(gray, (128, 1024))
+#             reshape_x = np.asarray(resize_x).reshape(resize_x.shape[0], resize_x.shape[1], 1)
+#             x.append(reshape_x)
+#             y.append(df.iloc[i][1])
+#             name_test.append(df.iloc[i])
 
 
-    for n, i in enumerate(y):
-        if i == "N":
-            y[n] = 0
-        elif i == "A":
-            y[n] = 1
+#     for n, i in enumerate(y):
+#         if i == "N":
+#             y[n] = 0
+#         elif i == "A":
+#             y[n] = 1
 
-    x = np.asarray(x).astype(int)
-    y = np.asarray(y).astype(int)
+#     x = np.asarray(x).astype(int)
+#     y = np.asarray(y).astype(int)
 
-    test_images, test_labels = x, y
+#     test_images, test_labels = x, y
     # # Normalize pixel values to be between 0 and 1
-    test_images = test_images / 255.0
+#     test_images = test_images / 255.0
 
-    import keras
-    import tensorflow as tf
-    from keras.models import load_model
+#     import keras
+#     import tensorflow as tf
+#     from keras.models import load_model
 
     # model = load_model('./pred_model.h5', custom_objects={'fbeta': fbeta})
-    model = tf.keras.models.load_model('./pred_model.h5', custom_objects={'fbeta': fbeta})
+#     model = tf.keras.models.load_model('./pred_model.h5', custom_objects={'fbeta': fbeta})
     # model = tf.keras.models.load_model('./pred_model.h5', custom_objects={'fbeta': fbeta})
     # converter = tf.lite.TFLiteConverter.from_keras_model(model)  # .from_saved_model(saved_model_dir)
     # tflite_model = converter.convert()
     # open("model.tflite", "wb").write(tflite_model)
 
-    pred_labels = model.predict_classes(test_images)
+#     pred_labels = model.predict_classes(test_images)
     
-    pred_labels = np.asarray(pred_labels).astype('str')
-    for n, i in enumerate(pred_labels):
-        if i == '0':
-            pred_labels[n] = "N"
-        elif i == '1':
-            pred_labels[n] = "A"
+#     pred_labels = np.asarray(pred_labels).astype('str')
+#     for n, i in enumerate(pred_labels):
+#         if i == '0':
+#             pred_labels[n] = "N"
+#         elif i == '1':
+#             pred_labels[n] = "A"
+    # == Start ==
+    
+    # Use only 'N' and 'A' labels for testing
+    test_features = np.array([])    
+    test_labels = np.array([])
+    ECG_name = np.array([])
+    
+    for idx, ecg_lead in enumerate(ecg_leads):
+        if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
+            peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=100)
+            hrv = nk.hrv_time(
+                peaks, sampling_rate=100
+            )
+            test_features = np.append(test_features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
 
-    def pred_use(test_name):
+            #features = np.append(features,[[hrv['HRV_CVNN'], hrv['HRV_SDNN'], hrv['HRV_HTI']]])
+            test_labels = np.append(test_labels, ecg_labels[idx])
+            ECG_name = np.append(ECG_name, ecg_names[idx])
 
-        pred = list()
+    test_features= test_features.reshape(int(len(test_features)/14), 14)
+    x = np.isnan(test_features)
+    # replacing NaN values with 0
+    test_features[x] = 0
 
-        pred = np.append(pred, (list(test_name), list(pred_labels)))
-
-        return pred
-
-    predictions = pred_use(name_test)
+    X_test = test_features
+    y_test = test_labels
+    
+    # with trained model to predict
+    loaded_model = joblib.load('GradientBoostingClassifier')
+    pred_labels = loaded_model.predict(X_test)
+    
+    # a list of tuple
+    predictions = list()
+    
+    for idx in enumerate(X_test):
+        predictions.append((ECG_name[idx], pred_labels[idx]))
 
 
 
