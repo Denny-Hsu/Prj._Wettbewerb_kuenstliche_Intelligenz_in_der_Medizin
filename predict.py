@@ -219,6 +219,8 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
     X_test = test_features
     y_test = test_labels
+    # resample
+#     x_test_over, y_test_over = SMOTE(random_state=42).fit_resample(X_test, y_test)
     
     # with trained model to predict
     loaded_model = joblib.load('GradientBoostingClassifier')
