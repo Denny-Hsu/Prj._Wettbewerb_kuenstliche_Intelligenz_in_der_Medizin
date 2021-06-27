@@ -217,6 +217,9 @@ import neurokit2 as nk
 from sklearn.datasets import make_hastie_10_2
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score,f1_score
+from wettbewerb import load_references
+from imblearn.over_sampling import SMOTE
+
 
 
 # if _name_ == '_main_':  # bei multiprocessing auf Windows notwendig
@@ -248,7 +251,9 @@ features[x] = 0
 X_train = features
 y_train = labels
 
-clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth = 1, random_state = 0).fit(X_train , y_train)
+x_over, y_over = SMOTE(random_state=42).fit_resample(X_train, y_train)
+
+clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth = 1, random_state = 0).fit(x_over , y_over)
 
 import joblib
 
