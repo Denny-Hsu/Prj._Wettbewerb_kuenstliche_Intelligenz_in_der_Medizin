@@ -220,6 +220,9 @@ from sklearn.metrics import confusion_matrix, accuracy_score,f1_score
 from wettbewerb import load_references
 from imblearn.over_sampling import SMOTE
 
+import warnings
+warnings.filterwarnings("ignore")
+
 
 ecg_leads, ecg_labels, fs, ecg_names = load_references() # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
 
@@ -230,17 +233,17 @@ labels = np.array([])
 for idx, ecg_lead in enumerate(ecg_leads):
     if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
         peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=fs)
-        peaks = peaks.astype('float')
+        peaks = peaks.astype('float64')
         hrv = nk.hrv_time(peaks, sampling_rate=fs)
-        hrv = hrv.astype('float')
+        hrv = hrv.astype('float64')
         features = np.append(features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
+        features = features.astype('float64')
         labels = np.append(labels, ecg_labels[idx])
 
 features= features.reshape(int(len(features)/14), 14)
 x = np.isnan(features)
 # replacing NaN values with 0
 features[x] = 0
-features = features.astype('float')
 
 X_train = features
 y_train = labels
@@ -252,6 +255,6 @@ clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0).fit(x_over
 import joblib
 
 joblib.dump(clf, 'GradientBoostingClassifier')
-
+print('Finished for training and saved model.')
 # f1 = f1_score(y_test, clf_over_pred, pos_label= "A")
 # print(f1)
