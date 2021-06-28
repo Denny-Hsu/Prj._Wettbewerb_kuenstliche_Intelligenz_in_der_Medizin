@@ -21,9 +21,10 @@ from ecgdetectors import Detectors
 import os
 import pandas as pd
 from wettbewerb import load_references
-
 import joblib
 import neurokit2 as nk
+
+ecg_leads, ecg_labels, fs, ecg_names = load_references('../test/')  # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
 
 
 ###Signatur der Methode (Parameter und Anzahl return-Werte) darf nicht verändert werden
