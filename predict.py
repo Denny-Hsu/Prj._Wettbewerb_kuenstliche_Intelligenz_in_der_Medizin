@@ -130,7 +130,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
     #####
 
-#     ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name
+    ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
 
 #     test_set = ecg_leads
 #     if os.path.exists("../test/ecg_images"):
@@ -200,6 +200,8 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     # Use only 'N' and 'A' labels for testing
 
     # ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
+    import warnings
+    warnings.filterwarnings("ignore")
 
     test_features = np.array([])    
     test_labels = np.array([])
@@ -207,11 +209,12 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     
     for idx, ecg_lead in enumerate(ecg_leads):
         if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
-            peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=100)
-            hrv = nk.hrv_time(peaks, sampling_rate=100)
+            peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=fs)
+            peaks = peaks.astype('float64')
+            hrv = nk.hrv_time(peaks, sampling_rate=fs)
+            hrv = hrv.astype('float64')
             test_features = np.append(test_features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
-
-            #features = np.append(features,[[hrv['HRV_CVNN'], hrv['HRV_SDNN'], hrv['HRV_HTI']]])
+            test_features = test_features.astype('float64')
             test_labels = np.append(test_labels, ecg_labels[idx])
             ECG_name = np.append(ECG_name, ecg_names[idx])
 
@@ -222,9 +225,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
     X_test = test_features
     y_test = test_labels
-    # resample
-#     x_test_over, y_test_over = SMOTE(random_state=42).fit_resample(X_test, y_test)
-    
+
     # with trained model to predict
     loaded_model = joblib.load('GradientBoostingClassifier')
     pred_labels = loaded_model.predict(X_test)
