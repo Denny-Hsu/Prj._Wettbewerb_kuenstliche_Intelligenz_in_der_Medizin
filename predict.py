@@ -44,7 +44,6 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     predictions : list of tuples
         ecg_name und eure Diagnose
     '''
-
 #------------------------------------------------------------------------------
 # Euer Code ab hier
 #     model_name = "model.npy"
@@ -130,7 +129,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
     #####
 
-    ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
+    # ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
 
 #     test_set = ecg_leads
 #     if os.path.exists("../test/ecg_images"):
@@ -195,28 +194,18 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 #         elif i == '1':
 #             pred_labels[n] = "A"
 
-    # == Start ==
-    
-    # Use only 'N' and 'A' labels for testing
-
-    # ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
     import warnings
     warnings.filterwarnings("ignore")
 
     test_features = np.array([])    
-    test_labels = np.array([])
-    ECG_name = np.array([])
-    
+
     for idx, ecg_lead in enumerate(ecg_leads):
-        if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
-            peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=fs)
-            peaks = peaks.astype('float64')
-            hrv = nk.hrv_time(peaks, sampling_rate=fs)
-            hrv = hrv.astype('float64')
-            test_features = np.append(test_features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
-            test_features = test_features.astype('float64')
-            test_labels = np.append(test_labels, ecg_labels[idx])
-            ECG_name = np.append(ECG_name, ecg_names[idx])
+        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= 200)
+        peaks = peaks.astype('float64')
+        hrv = nk.hrv_time(peaks, sampling_rate= fs)
+        hrv = hrv.astype('float64')
+        test_features = np.append(test_features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
+        test_features = test_features.astype('float64')
 
     test_features= test_features.reshape(int(len(test_features)/14), 14)
     x = np.isnan(test_features)
@@ -224,7 +213,6 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     test_features[x] = 0
 
     X_test = test_features
-    y_test = test_labels
 
     # with trained model to predict
     loaded_model = joblib.load('GradientBoostingClassifier')
@@ -233,8 +221,8 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     # a list of tuple
     predictions = list()
     
-    for idx in range(len(y_test)):
-        predictions.append((ECG_name[idx], pred_labels[idx]))
+    for idx in range(len(X_test)):
+        predictions.append((ecg_names[idx], pred_labels[idx]))
 
     # ------------------------------------------------------------------------------
     return predictions  # Liste von Tupels im Format (ecg_name,label) - Muss unverändert bleiben!

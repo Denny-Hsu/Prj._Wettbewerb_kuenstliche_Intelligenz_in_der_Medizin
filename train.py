@@ -231,14 +231,14 @@ detectors = Detectors(fs)                                 # Initialisierung des 
 labels = np.array([])
 
 for idx, ecg_lead in enumerate(ecg_leads):
-    if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
-        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=fs)
-        peaks = peaks.astype('float64')
-        hrv = nk.hrv_time(peaks, sampling_rate=fs)
-        hrv = hrv.astype('float64')
-        features = np.append(features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
-        features = features.astype('float64')
-        labels = np.append(labels, ecg_labels[idx])
+    # if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
+    peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= 200)
+    peaks = peaks.astype('float64')
+    hrv = nk.hrv_time(peaks, sampling_rate= fs)
+    hrv = hrv.astype('float64')
+    features = np.append(features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
+    features = features.astype('float64')
+    labels = np.append(labels, ecg_labels[idx])
 
 features= features.reshape(int(len(features)/14), 14)
 x = np.isnan(features)
@@ -250,7 +250,7 @@ y_train = labels
 
 x_over, y_over = SMOTE(random_state=42).fit_resample(X_train, y_train)
 
-clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0).fit(x_over , y_over)
+clf = GradientBoostingClassifier(n_estimators=1000, learning_rate=1.0).fit(x_over , y_over)
 
 import joblib
 
@@ -258,3 +258,6 @@ joblib.dump(clf, 'GradientBoostingClassifier')
 print('Finished for training and saved model.')
 # f1 = f1_score(y_test, clf_over_pred, pos_label= "A")
 # print(f1)
+
+# from sklearn.metrics import classification_report
+# print(classification_report(y_test, clf_over_pred))
