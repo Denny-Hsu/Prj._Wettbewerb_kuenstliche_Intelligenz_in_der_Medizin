@@ -221,8 +221,6 @@ from wettbewerb import load_references
 from imblearn.over_sampling import SMOTE
 
 
-
-# if _name_ == '_main_':  # bei multiprocessing auf Windows notwendig
 ecg_leads, ecg_labels, fs, ecg_names = load_references() # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
 
 features = np.array([])
@@ -231,35 +229,29 @@ labels = np.array([])
 
 for idx, ecg_lead in enumerate(ecg_leads):
     if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
-        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=100)
-        hrv = nk.hrv_time(
-            peaks, sampling_rate=100
-        )
+        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=fs)
+        peaks = peaks.astype('float')
+        hrv = nk.hrv_time(peaks, sampling_rate=fs)
+        hrv = hrv.astype('float')
         features = np.append(features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
-
-        #features = np.append(features,[[hrv['HRV_CVNN'], hrv['HRV_SDNN'], hrv['HRV_HTI']]])
         labels = np.append(labels, ecg_labels[idx])
 
 features= features.reshape(int(len(features)/14), 14)
 x = np.isnan(features)
 # replacing NaN values with 0
 features[x] = 0
-
-# X_train, X_test = features[:2000], features[2000:]
-# y_train, y_test = labels[:2000], labels[2000:]
+features = features.astype('float')
 
 X_train = features
 y_train = labels
 
 x_over, y_over = SMOTE(random_state=42).fit_resample(X_train, y_train)
 
-clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth = 1, random_state = 0).fit(x_over , y_over)
+clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0).fit(x_over , y_over)
 
 import joblib
 
 joblib.dump(clf, 'GradientBoostingClassifier')
 
-# xxx = clf.score( X_test, clf_over_pred)
-# print(xxx)
 # f1 = f1_score(y_test, clf_over_pred, pos_label= "A")
 # print(f1)

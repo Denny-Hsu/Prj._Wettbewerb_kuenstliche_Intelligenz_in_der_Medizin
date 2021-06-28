@@ -24,8 +24,6 @@ from wettbewerb import load_references
 import joblib
 import neurokit2 as nk
 
-ecg_leads, ecg_labels, fs, ecg_names = load_references('../test/')  # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
-
 
 ###Signatur der Methode (Parameter und Anzahl return-Werte) darf nicht verändert werden
 def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
@@ -196,6 +194,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 #             pred_labels[n] = "N"
 #         elif i == '1':
 #             pred_labels[n] = "A"
+
     # == Start ==
     
     # Use only 'N' and 'A' labels for testing
@@ -209,9 +208,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     for idx, ecg_lead in enumerate(ecg_leads):
         if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
             peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=100)
-            hrv = nk.hrv_time(
-                peaks, sampling_rate=100
-            )
+            hrv = nk.hrv_time(peaks, sampling_rate=100)
             test_features = np.append(test_features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
 
             #features = np.append(features,[[hrv['HRV_CVNN'], hrv['HRV_SDNN'], hrv['HRV_HTI']]])
