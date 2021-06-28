@@ -7,11 +7,12 @@ scikit-learn==0.24.2
 imblearn==0.0
 PyWavelets==1.1.1
 pickle-mixin==1.0.2
-Counter==1.0.0
-tqdm==4.61.1
-opencv-python==4.5.2.54
+# Counter==1.0.0
+# tqdm==4.61.1
+# opencv-python==4.5.2.54
 hrv-analysis==1.0.4
 keras==2.4.3
-h5py==3.3.0
+# h5py==3.3.0
 tensorflow==2.5.0
 joblib==1.0.1
+neurokit2==0.1.2

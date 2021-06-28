@@ -199,7 +199,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     
     # Use only 'N' and 'A' labels for testing
 
-    ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
+    # ecg_leads,ecg_labels,fs,ecg_names = load_references('../test/') # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
 
     test_features = np.array([])    
     test_labels = np.array([])
