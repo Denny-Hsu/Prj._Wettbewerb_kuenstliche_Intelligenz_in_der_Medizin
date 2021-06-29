@@ -1,21 +1,26 @@
 # 18-ha-2010-pj
-Demo-Code zu "Wettbewerb künstliche Intelligenz in der Medizin" SoSe 2021
+Code zu "Wettbewerb künstliche Intelligenz in der Medizin" SoSe 2021
+<Projektseminar von Technische Universität Darmstadt>
+<project seminar from Technical University of Darmstadt>
 
-## Erste Schritte
+## Goal
+To predict the **normal** and **atrial fibrillation** from ecg-signals.
 
-1. dieses Repository klonen
-2. eigenes Repository auf github oder gitlab einrichten
-3. textdatei "teamname.txt" im top Ordner erstellen mit
-    <pre><code>"teamname.txt":
-    [Euer Teamname]
-    [Vorname Nachname
-    Vorname Nachname
-    ...]
-    </code></pre>
+## Setting before using.
+1. Python's version is under 3.7.
+2. If you still wanna use Python 3.8, must do some changes of the code in **train.py**:
+    fit_resample -> fit_sample
 
-4. loslegen
-
-## Wichtig!
+## Steps
+1. Use hrv_time to extract features from ecg-signals.
+2. Since the quantity of label **N** and **A** is big difference, resample the training dataset.
+3. Build the model from gradient boosting classifier.
+4. Build the model from XXX.
+5. Compare with these two models.
+6. 
+    
+    
+## Wichtig für die Abgabe!
 
 Die Dateien 
 - predict_pretrained.py
