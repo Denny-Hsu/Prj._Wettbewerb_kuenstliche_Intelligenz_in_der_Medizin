@@ -12,7 +12,7 @@
 # # opencv-python==4.5.2.54
 scipy==1.7.0
 matplotlib==3.4.2
-numpy==1.21.0
+numpy==1.19.2
 py-ecg-detectors==1.0.2
 pandas==1.2.5
 scikit-learn==0.24.2
