@@ -20,7 +20,7 @@ imblearn==0.0
 PyWavelets==1.1.1
 hrv-analysis==1.0.4
 keras==2.4.3
-tensorflow==2.5.0
+tensorflow==2.4
 joblib==1.0.1
 neurokit2==0.1.2
 
