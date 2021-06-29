@@ -10,6 +10,7 @@
 # # Counter==1.0.0
 # # tqdm==4.61.1
 # # opencv-python==4.5.2.54
+
 scipy==1.7.0
 matplotlib==3.4.2
 numpy==1.19.2
