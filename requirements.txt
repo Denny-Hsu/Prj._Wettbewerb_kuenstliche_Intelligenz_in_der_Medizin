@@ -10,6 +10,7 @@
 # # Counter==1.0.0
 # # tqdm==4.61.1
 # # opencv-python==4.5.2.54
+
 scipy==1.7.0
 matplotlib==3.4.2
 numpy==1.19.2
@@ -20,7 +21,7 @@ imblearn==0.0
 PyWavelets==1.1.1
 hrv-analysis==1.0.4
 keras==2.4.3
-tensorflow==2.5.0
+tensorflow==2.4
 joblib==1.0.1
 neurokit2==0.1.2
 
