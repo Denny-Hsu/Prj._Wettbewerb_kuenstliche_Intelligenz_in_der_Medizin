@@ -230,6 +230,64 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     warnings.filterwarnings("ignore")
     from tensorflow.keras.models import load_model
 
+    ###
+    def f1(y_true, y_pred):
+        def recall(y_true, y_pred):
+            """Recall metric.
+
+            Only computes a batch-wise average of recall.
+
+            Computes the recall, a metric for multi-label classification of
+            how many relevant items are selected.
+            """
+            true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+            possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+            recall = true_positives / (possible_positives + K.epsilon())
+            return recall
+
+        def precision(y_true, y_pred):
+            """Precision metric.
+
+            Only computes a batch-wise average of precision.
+
+            Computes the precision, a metric for multi-label classification of
+            how many selected items are relevant.
+            """
+            true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+            predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+            precision = true_positives / (predicted_positives + K.epsilon())
+            return precision
+
+        precision = precision(y_true, y_pred)
+        recall = recall(y_true, y_pred)
+        return 2 * ((precision * recall) / (precision + recall + K.epsilon()))
+
+    def f1_weighted(true, pred):  # shapes (batch, 4)
+
+        # for metrics include these two lines, for loss, don't include them
+        # these are meant to round 'pred' to exactly zeros and ones
+        # predLabels = K.argmax(pred, axis=-1)
+        # pred = K.one_hot(predLabels, 4)
+
+        ground_positives = K.sum(true, axis=0) + K.epsilon()  # = TP + FN
+        pred_positives = K.sum(pred, axis=0) + K.epsilon()  # = TP + FP
+        true_positives = K.sum(true * pred, axis=0) + K.epsilon()  # = TP
+        # all with shape (4,)
+
+        precision = true_positives / pred_positives
+        recall = true_positives / ground_positives
+        # both = 1 if ground_positives == 0 or pred_positives == 0
+        # shape (4,)
+
+        f1 = 2 * (precision * recall) / (precision + recall + K.epsilon())
+        # still with shape (4,)
+
+        weighted_f1 = f1 * ground_positives / K.sum(ground_positives)
+        weighted_f1 = K.sum(weighted_f1)
+
+        return 1 - weighted_f1  # for metrics, return only 'weighted_f1'
+    ###
+
     cnn_best_model = load_model('cnn_best_model.h5', custom_objects={'f1_weighted': f1_weighted, 'f1': f1})
 
     cnn_best_model.compile(optimizer=sgd,  # change: use SGD
