@@ -290,6 +290,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
     cnn_best_model = load_model('cnn_best_model.h5', custom_objects={'f1_weighted': f1_weighted, 'f1': f1})
 
+    sgd = SGD(lr=0.00005, decay=1e-6, momentum=0.9, nesterov=True)
     cnn_best_model.compile(optimizer=sgd,  # change: use SGD
                            loss=f1_weighted,  # 'binary_crossentropy' #'mean_squared_error' #categorical_crossentropy
                            metrics=[f1, "binary_accuracy"])
