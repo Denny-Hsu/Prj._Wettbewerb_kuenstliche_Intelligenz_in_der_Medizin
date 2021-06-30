@@ -230,7 +230,6 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     warnings.filterwarnings("ignore")
     from tensorflow.keras.models import load_model
     from tensorflow.keras.optimizers import SGD
-    from keras.utils.np_utils import *
     import numpy as np
 
     ###
