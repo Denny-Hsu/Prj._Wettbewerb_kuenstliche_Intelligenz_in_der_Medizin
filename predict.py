@@ -320,9 +320,9 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 
     for n, i in enumerate(pred_labels):
         if i == 0:
-            y_pred_classes[n] = 'N'
+            pred_labels[n] = 'N'
         if i == 1:
-            y_pred_classes[n] = 'A'
+            pred_labels[n] = 'A'
 
     predictions = list()
 
