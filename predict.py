@@ -193,11 +193,50 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
 #             pred_labels[n] = "N"
 #         elif i == '1':
 #             pred_labels[n] = "A"
+    #-------------------------------------------------------------------------------
+    ''' Gradient Boosting Classfier '''
+    # import warnings
+    # warnings.filterwarnings("ignore")
+    #
+    # test_features = np.array([])
+    #
+    # for idx, ecg_lead in enumerate(ecg_leads):
+    #     peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= 200)
+    #     peaks = peaks.astype('float64')
+    #     hrv = nk.hrv_time(peaks, sampling_rate= fs)
+    #     hrv = hrv.astype('float64')
+    #     test_features = np.append(test_features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
+    #     test_features = test_features.astype('float64')
+    #
+    # test_features= test_features.reshape(int(len(test_features)/14), 14)
+    # x = np.isnan(test_features)
+    # # replacing NaN values with 0
+    # test_features[x] = 0
+    #
+    # X_test = test_features
+    #
+    # # with trained model to predict
+    # loaded_model = joblib.load('GradientBoostingClassifier')
+    # pred_labels = loaded_model.predict(X_test)
+    
+    # # a list of tuple
+    # predictions = list()
+    #
+    # for idx in range(len(X_test)):
+    #     predictions.append((ecg_names[idx], pred_labels[idx]))
 
+    ''' Convolutional Neural Network '''
     import warnings
     warnings.filterwarnings("ignore")
+    from tensorflow.keras.models import load_model
 
-    test_features = np.array([])    
+    cnn_best_model = load_model('cnn_best_model.h5', custom_objects={'f1_weighted': f1_weighted, 'f1': f1})
+
+    cnn_best_model.compile(optimizer=sgd,  # change: use SGD
+                           loss=f1_weighted,  # 'binary_crossentropy' #'mean_squared_error' #categorical_crossentropy
+                           metrics=[f1, "binary_accuracy"])
+
+    test_features = np.array([])
 
     for idx, ecg_lead in enumerate(ecg_leads):
         peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= 200)
@@ -213,16 +252,20 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     test_features[x] = 0
 
     X_test = test_features
-
+    X_test_arr = np.array(X_test).reshape(np.array(X_test).shape[0], np.array(X_test).shape[1], 1)
     # with trained model to predict
-    loaded_model = joblib.load('GradientBoostingClassifier')
-    pred_labels = loaded_model.predict(X_test)
-    
-    # a list of tuple
+    y_pred = cnn_best_model.predict(X_test_arr)
+    pred_labels = [np.argmax(y, axis=None, out=None) for y in y_pred]
+
+    for n, i in enumerate(pred_labels):
+        if i == 0:
+            y_pred_classes[n] = 'N'
+        if i == 1:
+            y_pred_classes[n] = 'A'
+
     predictions = list()
-    
+
     for idx in range(len(X_test)):
         predictions.append((ecg_names[idx], pred_labels[idx]))
-
     # ------------------------------------------------------------------------------
     return predictions  # Liste von Tupels im Format (ecg_name,label) - Muss unverändert bleiben!
