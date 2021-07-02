@@ -12,11 +12,11 @@ Predict the **normal** and **atrial fibrillation** from ecg-signals, and try to 
 
 ## Steps
 1. Use hrv_time to extract features from ecg-signals.
-2. Since the quantity of label **N** and **A** is big difference in training dataset, resample it.
+2. Since the quantity of label **N** and **A** is imbalanced in training dataset, resample it.
 3. Build the model from gradient boosting classifier.
-4. Build the model from XXX.
+4. Build the model from CNN.
 5. Compare with these two models.
-6. 
+6. Last but not least, choose the one, which has a better F1-Score.
     
     
 ## Wichtig für die Abgabe!
