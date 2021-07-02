@@ -537,7 +537,7 @@ labels = np.array([])
 
 for idx, ecg_lead in enumerate(ecg_leads):
     if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
-        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= 200)
+        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= fs)
         peaks = peaks.astype('float64')
         hrv = nk.hrv_time(peaks, sampling_rate= fs)
         hrv = hrv.astype('float64')
