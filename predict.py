@@ -224,78 +224,115 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     #
     # for idx in range(len(X_test)):
     #     predictions.append((ecg_names[idx], pred_labels[idx]))
-
+    #------------------------------------------------------------------
     ''' Convolutional Neural Network '''
+    # import warnings
+    # warnings.filterwarnings("ignore")
+    # from tensorflow.keras.models import load_model
+    # from tensorflow.keras.optimizers import SGD
+    # import numpy as np
+    #
+    # ###
+    # def f1(y_true, y_pred):
+    #     def recall(y_true, y_pred):
+    #         """Recall metric.
+    #
+    #         Only computes a batch-wise average of recall.
+    #
+    #         Computes the recall, a metric for multi-label classification of
+    #         how many relevant items are selected.
+    #         """
+    #         true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    #         possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    #         recall = true_positives / (possible_positives + K.epsilon())
+    #         return recall
+    #
+    #     def precision(y_true, y_pred):
+    #         """Precision metric.
+    #
+    #         Only computes a batch-wise average of precision.
+    #
+    #         Computes the precision, a metric for multi-label classification of
+    #         how many selected items are relevant.
+    #         """
+    #         true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    #         predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    #         precision = true_positives / (predicted_positives + K.epsilon())
+    #         return precision
+    #
+    #     precision = precision(y_true, y_pred)
+    #     recall = recall(y_true, y_pred)
+    #     return 2 * ((precision * recall) / (precision + recall + K.epsilon()))
+    #
+    # def f1_weighted(true, pred):  # shapes (batch, 4)
+    #
+    #     # for metrics include these two lines, for loss, don't include them
+    #     # these are meant to round 'pred' to exactly zeros and ones
+    #     # predLabels = K.argmax(pred, axis=-1)
+    #     # pred = K.one_hot(predLabels, 4)
+    #
+    #     ground_positives = K.sum(true, axis=0) + K.epsilon()  # = TP + FN
+    #     pred_positives = K.sum(pred, axis=0) + K.epsilon()  # = TP + FP
+    #     true_positives = K.sum(true * pred, axis=0) + K.epsilon()  # = TP
+    #     # all with shape (4,)
+    #
+    #     precision = true_positives / pred_positives
+    #     recall = true_positives / ground_positives
+    #     # both = 1 if ground_positives == 0 or pred_positives == 0
+    #     # shape (4,)
+    #
+    #     f1 = 2 * (precision * recall) / (precision + recall + K.epsilon())
+    #     # still with shape (4,)
+    #
+    #     weighted_f1 = f1 * ground_positives / K.sum(ground_positives)
+    #     weighted_f1 = K.sum(weighted_f1)
+    #
+    #     return 1 - weighted_f1  # for metrics, return only 'weighted_f1'
+    # ###
+    #
+    # cnn_best_model = load_model('cnn_best_model.h5', custom_objects={'f1_weighted': f1_weighted, 'f1': f1})
+    #
+    # sgd = SGD(lr=0.00005, decay=1e-6, momentum=0.9, nesterov=True)
+    # cnn_best_model.compile(optimizer=sgd,  # change: use SGD
+    #                        loss=f1_weighted,  # 'binary_crossentropy' #'mean_squared_error' #categorical_crossentropy
+    #                        metrics=[f1, "binary_accuracy"])
+    #
+    # test_features = np.array([])
+    #
+    # for idx, ecg_lead in enumerate(ecg_leads):
+    #     peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= 200)
+    #     peaks = peaks.astype('float64')
+    #     hrv = nk.hrv_time(peaks, sampling_rate= fs)
+    #     hrv = hrv.astype('float64')
+    #     test_features = np.append(test_features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
+    #     test_features = test_features.astype('float64')
+    #
+    # test_features= test_features.reshape(int(len(test_features)/14), 14)
+    # x = np.isnan(test_features)
+    # # replacing NaN values with 0
+    # test_features[x] = 0
+    #
+    # X_test = test_features
+    # X_test_arr = np.array(X_test).reshape(np.array(X_test).shape[0], np.array(X_test).shape[1], 1)
+    # # with trained model to predict
+    # y_pred = cnn_best_model.predict(X_test_arr)
+    # pred_labels = [np.argmax(y, axis=None, out=None) for y in y_pred]
+    #
+    # for n, i in enumerate(pred_labels):
+    #     if i == 0:
+    #         pred_labels[n] = 'N'
+    #     if i == 1:
+    #         pred_labels[n] = 'A'
+    #
+    # predictions = list()
+    #
+    # for idx in range(len(X_test)):
+    #     predictions.append((ecg_names[idx], pred_labels[idx]))
+    # ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    ''' AdaBoost Classifier '''
     import warnings
     warnings.filterwarnings("ignore")
-    from tensorflow.keras.models import load_model
-    from tensorflow.keras.optimizers import SGD
-    import numpy as np
-
-    ###
-    def f1(y_true, y_pred):
-        def recall(y_true, y_pred):
-            """Recall metric.
-
-            Only computes a batch-wise average of recall.
-
-            Computes the recall, a metric for multi-label classification of
-            how many relevant items are selected.
-            """
-            true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-            possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-            recall = true_positives / (possible_positives + K.epsilon())
-            return recall
-
-        def precision(y_true, y_pred):
-            """Precision metric.
-
-            Only computes a batch-wise average of precision.
-
-            Computes the precision, a metric for multi-label classification of
-            how many selected items are relevant.
-            """
-            true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-            predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-            precision = true_positives / (predicted_positives + K.epsilon())
-            return precision
-
-        precision = precision(y_true, y_pred)
-        recall = recall(y_true, y_pred)
-        return 2 * ((precision * recall) / (precision + recall + K.epsilon()))
-
-    def f1_weighted(true, pred):  # shapes (batch, 4)
-
-        # for metrics include these two lines, for loss, don't include them
-        # these are meant to round 'pred' to exactly zeros and ones
-        # predLabels = K.argmax(pred, axis=-1)
-        # pred = K.one_hot(predLabels, 4)
-
-        ground_positives = K.sum(true, axis=0) + K.epsilon()  # = TP + FN
-        pred_positives = K.sum(pred, axis=0) + K.epsilon()  # = TP + FP
-        true_positives = K.sum(true * pred, axis=0) + K.epsilon()  # = TP
-        # all with shape (4,)
-
-        precision = true_positives / pred_positives
-        recall = true_positives / ground_positives
-        # both = 1 if ground_positives == 0 or pred_positives == 0
-        # shape (4,)
-
-        f1 = 2 * (precision * recall) / (precision + recall + K.epsilon())
-        # still with shape (4,)
-
-        weighted_f1 = f1 * ground_positives / K.sum(ground_positives)
-        weighted_f1 = K.sum(weighted_f1)
-
-        return 1 - weighted_f1  # for metrics, return only 'weighted_f1'
-    ###
-
-    cnn_best_model = load_model('cnn_best_model.h5', custom_objects={'f1_weighted': f1_weighted, 'f1': f1})
-
-    sgd = SGD(lr=0.00005, decay=1e-6, momentum=0.9, nesterov=True)
-    cnn_best_model.compile(optimizer=sgd,  # change: use SGD
-                           loss=f1_weighted,  # 'binary_crossentropy' #'mean_squared_error' #categorical_crossentropy
-                           metrics=[f1, "binary_accuracy"])
 
     test_features = np.array([])
 
@@ -313,20 +350,15 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     test_features[x] = 0
 
     X_test = test_features
-    X_test_arr = np.array(X_test).reshape(np.array(X_test).shape[0], np.array(X_test).shape[1], 1)
+
     # with trained model to predict
-    y_pred = cnn_best_model.predict(X_test_arr)
-    pred_labels = [np.argmax(y, axis=None, out=None) for y in y_pred]
+    loaded_model = joblib.load('AdaBoostClassifier')
+    pred_labels = loaded_model.predict(X_test)
 
-    for n, i in enumerate(pred_labels):
-        if i == 0:
-            pred_labels[n] = 'N'
-        if i == 1:
-            pred_labels[n] = 'A'
-
+    # a list of tuple
     predictions = list()
 
     for idx in range(len(X_test)):
         predictions.append((ecg_names[idx], pred_labels[idx]))
-    # ------------------------------------------------------------------------------
+
     return predictions  # Liste von Tupels im Format (ecg_name,label) - Muss unverändert bleiben!
