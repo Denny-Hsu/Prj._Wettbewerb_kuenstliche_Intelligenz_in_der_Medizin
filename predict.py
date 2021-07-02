@@ -331,20 +331,50 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     # ------------------------------------------------------------------------------
     # ------------------------------------------------------------------
     ''' AdaBoost Classifier '''
+    # import warnings
+    # warnings.filterwarnings("ignore")
+    #
+    # test_features = np.array([])
+    #
+    # for idx, ecg_lead in enumerate(ecg_leads):
+    #     peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= 200)
+    #     peaks = peaks.astype('float64')
+    #     hrv = nk.hrv_time(peaks, sampling_rate= fs)
+    #     hrv = hrv.astype('float64')
+    #     test_features = np.append(test_features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
+    #     test_features = test_features.astype('float64')
+    #
+    # test_features= test_features.reshape(int(len(test_features)/14), 14)
+    # x = np.isnan(test_features)
+    # # replacing NaN values with 0
+    # test_features[x] = 0
+    #
+    # X_test = test_features
+    #
+    # # with trained model to predict
+    # loaded_model = joblib.load('AdaBoostClassifier')
+    # pred_labels = loaded_model.predict(X_test)
+    #-----------------------------------------------------------------------------------------
+
+    ''' XGBoost Classifier '''
     import warnings
     warnings.filterwarnings("ignore")
 
     test_features = np.array([])
 
     for idx, ecg_lead in enumerate(ecg_leads):
-        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= 200)
+        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=200)
         peaks = peaks.astype('float64')
-        hrv = nk.hrv_time(peaks, sampling_rate= fs)
+        hrv = nk.hrv_time(peaks, sampling_rate=fs)
         hrv = hrv.astype('float64')
-        test_features = np.append(test_features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
+        test_features = np.append(test_features,
+                                  [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'],
+                                   hrv['HRV_MadNN'], hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'],
+                                   hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],
+                                   hrv['HRV_pNN50']])
         test_features = test_features.astype('float64')
 
-    test_features= test_features.reshape(int(len(test_features)/14), 14)
+    test_features = test_features.reshape(int(len(test_features) / 14), 14)
     x = np.isnan(test_features)
     # replacing NaN values with 0
     test_features[x] = 0
@@ -352,7 +382,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     X_test = test_features
 
     # with trained model to predict
-    loaded_model = joblib.load('AdaBoostClassifier')
+    loaded_model = joblib.load('XGBoostClassifier')
     pred_labels = loaded_model.predict(X_test)
 
     # a list of tuple

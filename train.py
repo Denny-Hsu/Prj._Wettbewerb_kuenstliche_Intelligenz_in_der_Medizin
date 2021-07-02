@@ -452,6 +452,64 @@
 # print('F1 score',test_f1)
 #----------------------------------------
 ''' AdaBoost Classifier '''
+
+# import csv
+# import scipy.io as sio
+# import matplotlib.pyplot as plt
+# import numpy as np
+# from ecgdetectors import Detectors
+# import os
+#
+# import pandas as pd
+# import neurokit2 as nk
+# from sklearn.datasets import make_hastie_10_2
+# from sklearn.ensemble import AdaBoostClassifier
+# from sklearn.metrics import confusion_matrix, accuracy_score,f1_score
+# from wettbewerb import load_references
+# from imblearn.over_sampling import SMOTE
+#
+# import warnings
+# warnings.filterwarnings("ignore")
+#
+#
+# ecg_leads, ecg_labels, fs, ecg_names = load_references() # Importiere EKG-Dateien, zugehörige Diagnose, Sampling-Frequenz (Hz) und Name                                                # Sampling-Frequenz 300 Hz
+#
+# features = np.array([])
+# detectors = Detectors(fs)                                 # Initialisierung des QRS-Detektors
+# labels = np.array([])
+#
+# for idx, ecg_lead in enumerate(ecg_leads):
+#     if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
+#         peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= fs)
+#         peaks = peaks.astype('float64')
+#         hrv = nk.hrv_time(peaks, sampling_rate= fs)
+#         hrv = hrv.astype('float64')
+#         features = np.append(features, [hrv['HRV_CVNN'], hrv['HRV_CVSD'], hrv['HRV_HTI'], hrv['HRV_IQRNN'], hrv['HRV_MCVNN'], hrv['HRV_MadNN'],  hrv['HRV_MeanNN'], hrv['HRV_MedianNN'], hrv['HRV_RMSSD'], hrv['HRV_SDNN'], hrv['HRV_SDSD'], hrv['HRV_TINN'], hrv['HRV_pNN20'],hrv['HRV_pNN50'] ])
+#         features = features.astype('float64')
+#         labels = np.append(labels, ecg_labels[idx])
+#
+# features= features.reshape(int(len(features)/14), 14)
+# x = np.isnan(features)
+# # replacing NaN values with 0
+# features[x] = 0
+#
+# X_train = features
+# y_train = labels
+#
+# x_over, y_over = SMOTE(random_state=42).fit_resample(X_train, y_train)
+#
+# ada = AdaBoostClassifier(n_estimators=150, learning_rate=0.4).fit(x_over , y_over)
+#
+# import joblib
+#
+# joblib.dump(ada, 'AdaBoostClassifier')
+# print('Finished for training and saved model.')
+
+# from sklearn.metrics import classification_report
+# print(classification_report(y_test, clf_over_pred))
+#----------------------------------------
+''' XGBoost Classifier '''
+
 import csv
 import scipy.io as sio
 import matplotlib.pyplot as plt
@@ -462,7 +520,7 @@ import os
 import pandas as pd
 import neurokit2 as nk
 from sklearn.datasets import make_hastie_10_2
-from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import confusion_matrix, accuracy_score,f1_score
 from wettbewerb import load_references
 from imblearn.over_sampling import SMOTE
@@ -479,7 +537,7 @@ labels = np.array([])
 
 for idx, ecg_lead in enumerate(ecg_leads):
     if (ecg_labels[idx] == "N") or (ecg_labels[idx] == "A"):
-        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= fs)
+        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate= 200)
         peaks = peaks.astype('float64')
         hrv = nk.hrv_time(peaks, sampling_rate= fs)
         hrv = hrv.astype('float64')
@@ -497,11 +555,15 @@ y_train = labels
 
 x_over, y_over = SMOTE(random_state=42).fit_resample(X_train, y_train)
 
-ada = AdaBoostClassifier(n_estimators=150, learning_rate=0.4).fit(x_over , y_over)
+import xgboost as xgb
+
+xgb_C = xgb.XGBClassifier(objective='reg:linear', colsample_bytree = 0.3, learning_rate = 0.55,
+                max_depth = 5, alpha = 3, n_estimators = 150).fit(x_over, y_over)
+
 
 import joblib
 
-joblib.dump(ada, 'AdaBoostClassifier')
+joblib.dump(xgb_C, 'XGBoostClassifier')
 print('Finished for training and saved model.')
 
 # from sklearn.metrics import classification_report
