@@ -363,7 +363,7 @@ def predict_labels(ecg_leads,fs,ecg_names,use_pretrained=False):
     test_features = np.array([])
 
     for idx, ecg_lead in enumerate(ecg_leads):
-        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=200)
+        peaks, info = nk.ecg_peaks(ecg_lead, sampling_rate=fs)
         peaks = peaks.astype('float64')
         hrv = nk.hrv_time(peaks, sampling_rate=fs)
         hrv = hrv.astype('float64')
