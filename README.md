@@ -26,15 +26,4 @@ Predict the **normal** and **atrial fibrillation** from ecg-signals, and try to 
 3. Run predict_pretrained.py (Call predict_label() and print .csv file for the prediction)
 4. Run wettbewerb.py
 5. Run score.py
-    
-## Wichtig für die Abgabe!
-
-Die Dateien 
-- predict_pretrained.py
-- predict_trained.py
-- wettbewerb.py
-- score.py
-
-werden von uns beim testen auf den ursprünglichen Stand zurückgesetzt. Es ist deshalb nicht empfehlenswert diese zu verändern.
-
-Bitte alle verwendeten packages in "requirements.txt" bei der Abgabe zur Evaluation angeben. Wir selbst verwenden Python 3.8. Wenn es ein Paket gibt, welches nur unter einer anderen Version funktioniert ist das auch in Ordung. In dem Fall bitte Python-Version mit angeben.
+  
