@@ -15,10 +15,17 @@ Predict the **normal** and **atrial fibrillation** from ecg-signals, and try to 
 2. Since the quantity of label **N** and **A** is imbalanced in training dataset, resample it.
 3. Build the model from Gradient Boosting Classifier.
 4. Build the model from AdaBoost Classifier.
-5. Build the model from CNN.
-6. Compare with these two models.
-7. Last but not least, choose the one, which has a better F1-Score.
-    
+5. Build the model from XGBoost Classifier.
+6. Build the model from CNN.
+7. Compare with these four models.
+8. Last but not least, choose the one, which has a better F1-Score.
+
+## By Testing
+1. Run train.py (Here should choose the model)
+2. Run predict.py (Here should choose the model)
+3. Run predict_pretrained.py (Call predict_label() and print .csv file for the prediction)
+4. Run wettbewerb.py
+5. Run score.py
     
 ## Wichtig für die Abgabe!
 
